@@ -66,9 +66,10 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file):
 	tn_read_ids = [hit.id for hit in res.hits]
 
 	# filter the reads to just those with the transposon, write to file in case we want them later
-	all_reads = SeqIO.parse(reads_file, 'fasta')
-	tn_reads = [r for r in all_reads if r.id in tn_read_ids]
-	SeqIO.write(tn_reads, f'{basename}_tnreads.fasta', 'fasta')
+	if not Path(f'{basename}_tnreads.fasta').exists():
+		all_reads = SeqIO.parse(reads_file, 'fasta')
+		tn_reads = [r for r in all_reads if r.id in tn_read_ids]
+		SeqIO.write(tn_reads, f'{basename}_tnreads.fasta', 'fasta')
 	tn_reads = list([r for r in SeqIO.parse(f'{basename}_tnreads.fasta', 'fasta')])
 
 	all_results = []
