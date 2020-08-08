@@ -24,17 +24,17 @@ def main():
 	genome_file = 'bl21de3-genome.fasta'
 	'''
 	print("1")
-	process_sample('CCS_SLMS_22.fasta', 'SLMS_22_tn.fasta', 'SLMS_22_plasmid.fasta', 'bl21de3-genome.fasta')
+	#process_sample('CCS_SLMS_22.fasta', 'SLMS_22_tn.fasta', 'SLMS_22_plasmid.fasta', 'bl21de3-genome.fasta')
 	print("2")
-	process_sample('CCS_SLMS_23.fasta', 'transposon_SLMS_23.fasta', 'transposon_plasmid_SLMS23.fasta', 'bw25113-reca-pb-genome.fasta')
+	#process_sample('CCS_SLMS_23.fasta', 'transposon_SLMS_23.fasta', 'transposon_plasmid_SLMS23.fasta', 'bw25113-reca-pb-genome.fasta')
 	print("3")
-	process_sample('CCS_SLMS_24.fasta', 'SLMS_24_tn.fasta', 'SLMS_24_plasmid.fasta', 'bw25113-reca-pb-genome.fasta')
+	#process_sample('CCS_SLMS_24.fasta', 'SLMS_24_tn.fasta', 'SLMS_24_plasmid.fasta', 'bw25113-reca-pb-genome.fasta')
 	print("4")
-	process_sample('CCS_SLMS_3.fasta', 'SLMS_3_tn.fasta', 'SLMS_3_plasmid.fasta', 'bl21de3-genome.fasta')
+	#process_sample('CCS_SLMS_3.fasta', 'SLMS_3_tn.fasta', 'SLMS_3_plasmid.fasta', 'bl21de3-genome.fasta')
 	print("uploading outputs")
 	s3 = boto3.client('s3')
 	for filename in os.listdir('outputs'):
-		with open("outputs/{file}") as file:
+		with open("outputs/{filename}") as file:
 			s3.upload_file(file, "sternberg-sequencing-data", f"pilot_samples/outputs/{filename}")
 	print("done")
 
@@ -76,7 +76,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file):
 	for hit in res.hits:
 		tn_read = next(r for r in tn_reads if r.id == hit.id)
 		all_results.append(get_read_obj(hit, tn_read))
-	attach_alignments(all_results, basename, plasmid_file, genome_file)
+	attach_alignments(all_results, basename, plasmid_file, genome)
 	with open(f'outputs/output_{reads_file}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
 		writer.writerow(['read_id', 'type', 'hsps', 'ends', 'types'])
