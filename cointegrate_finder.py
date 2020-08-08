@@ -180,7 +180,7 @@ def get_read_obj(hit, tn_read, reads_seqrecs):
 		prev_end = hsp.hit_end
 	return read_result
 
-def do_blast(query_file, subject_file,):
+def do_blast(query_file, subject_file, output_name):
 	cline = NcbiblastnCommandline(query=query_file, subject=subject_file, num_alignments=10000, out=Path(f'./{output_name}'), outfmt=5)
 	subprocess.run(str(cline), shell=True)
 	return output_name
