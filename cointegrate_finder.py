@@ -40,7 +40,7 @@ def main():
 
 def download_s3(filename):
 	if Path(filename).exists():
-		continue
+		return
 	s3 = boto3.client('s3')
 	s3.download_file('sternberg-sequencing-data', f'pilot_samples/{filename}', filename)
 
