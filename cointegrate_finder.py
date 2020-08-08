@@ -188,8 +188,9 @@ def get_read_obj(hit, tn_read, tn_reads):
 	return read_result
 
 def do_blast(query_file, subject_file, output_name):
+	if Path(f'./{output_name}').exists():
+		return output_name
 	cline = NcbiblastnCommandline(query=query_file, subject=subject_file, num_alignments=10000, out=Path(f'./{output_name}'), outfmt=5)
-	print(str(cline))
 	subprocess.run(str(cline), shell=True)
 	return output_name
 
