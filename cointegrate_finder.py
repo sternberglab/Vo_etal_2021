@@ -94,7 +94,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file):
 		plasmids = [r for r in all_results if r['type'] is 'pl']
 		SeqIO.write([r['read_seqrec'] for r in plasmids[:10]], f"outputs/{reads_file}_plasmids.fasta", "fasta")
 		insufficients = [r for r in all_results if r['type'] is 'partialRead-insufficient']
-		print(len(insufficients))
+		print(set([r['type'] for r in reads]))
 		SeqIO.write([r['read_seqrec'] for r in insufficients[:10]], f"outputs/{reads_file}_insufficient.fasta", "fasta")
 		unknown = [r for r in all_results if r['type'] is 'unknown']
 		SeqIO.write([r['read_seqrec'] for r in unknown[:10]], f"outputs/{reads_file}_unknowns.fasta", "fasta")
