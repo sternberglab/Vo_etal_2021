@@ -154,6 +154,8 @@ def get_read_obj(hit, tn_read):
 	for (i, hsp) in enumerate(sorted(hit.hsps, key=lambda x: x.hit_start)):
 		read_result['hsps'].append((hsp.hit_start, hsp.hit_end))
 		hit_length = hsp.hit_end - hsp.hit_start
+		if hit_length < 100:
+			continue
 		is_start = hsp.hit_start < 5
 		is_end = hit.seq_len - hsp.hit_end < 5
 
