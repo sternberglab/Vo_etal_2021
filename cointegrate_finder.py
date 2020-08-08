@@ -94,7 +94,6 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file):
 		plasmids = [r for r in all_results if r['type'] is 'pl']
 		SeqIO.write([r['read_seqrec'] for r in plasmids[:10]], f"outputs/{reads_file}_plasmids.fasta", "fasta")
 		insufficients = [r for r in all_results if r['type'] is 'partialRead']
-		print(set([r['type'] for r in all_results]))
 		SeqIO.write([r['read_seqrec'] for r in insufficients[:10]], f"outputs/{reads_file}_insufficient.fasta", "fasta")
 		unknown = [r for r in all_results if r['type'] is 'unknown']
 		SeqIO.write([r['read_seqrec'] for r in unknown[:10]], f"outputs/{reads_file}_unknowns.fasta", "fasta")
@@ -154,7 +153,7 @@ def get_read_obj(hit, tn_read):
 	for (i, hsp) in enumerate(sorted(hit.hsps, key=lambda x: x.hit_start)):
 		read_result['hsps'].append((hsp.hit_start, hsp.hit_end))
 		hit_length = hsp.hit_end - hsp.hit_start
-		if hit_length < 100:
+		if hit_length < 100 or hsp.evalue > 0.00001:
 			continue
 		is_start = hsp.hit_start < 5
 		is_end = hit.seq_len - hsp.hit_end < 5
