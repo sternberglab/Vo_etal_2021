@@ -64,15 +64,17 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file):
 		
 		# We are querying the transposon against all the reads, so only one result with many hits is output
 		res = SearchIO.read(blast_filename, 'blast-xml')
+		print("ress.....")
 		tn_read_ids = [hit.id for hit in res.hits]
 
 		# filter the reads to just those with the transposon, write to file in case we want them later
 		all_reads = SeqIO.parse(reads_file, 'fasta')
 		tn_reads = [r for r in all_reads if r.id in tn_read_ids]
-		print(len(tn_reads), print(len(res.hits)))
+		print("nums", len(tn_reads), print(len(res.hits)))
 		SeqIO.write(tn_reads, f'{basename}_tnreads.fasta', 'fasta')
-	tn_reads = list([r for r in SeqIO.parse(f'{basename}_tnreads.fasta', 'fasta')])
-
+	if not tn_reads:
+		tn_reads = list([r for r in SeqIO.parse(f'{basename}_tnreads.fasta', 'fasta')])
+	print("lalala", len(tn_reads))
 	all_results = []
 	# each hit represents one or more matches of the query against a read sequence
 	for hit in res.hits:
