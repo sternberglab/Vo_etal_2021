@@ -66,16 +66,16 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file):
 	tn_read_ids = [hit.id for hit in res.hits]
 
 	# filter the reads to just those with the transposon, write to file in case we want them later
-	#all_reads = SeqIO.parse(reads_file, 'fasta')
-	#tn_reads = [r for r in all_reads if r.id in tn_read_ids]
-	#SeqIO.write(tn_reads, f'{basename}_tnreads.fasta', 'fasta')
+	all_reads = SeqIO.parse(reads_file, 'fasta')
+	tn_reads = [r for r in all_reads if r.id in tn_read_ids]
+	SeqIO.write(tn_reads, f'{basename}_tnreads.fasta', 'fasta')
 	tn_reads = list([r for r in SeqIO.parse(f'{basename}_tnreads.fasta', 'fasta')])
 
 	all_results = []
 	# each hit represents one or more matches of the query against a read sequence
 	for hit in res.hits:
 		tn_read = next(r for r in tn_reads if r.id == hit.id)
-		all_results.append(get_read_obj(hit, tn_read, reads_seqrecs))
+		all_results.append(get_read_obj(hit, tn_read, tn_reads))
 	attach_alignments(all_results, basename)
 	with open(f'outputs/output_{reads_file}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
@@ -144,8 +144,8 @@ def attach_alignments(results, basename):
 			read['type'] = 'COINTEGRATE'
 	return results
 
-def get_read_obj(hit, tn_read, reads_seqrecs):
-	read_result = {'id': hit.id, 'hsps': [], 'ends': [], 'result': None, 'len': hit.seq_len, 'read_seqrec': next(r for r in reads_seqrecs if r.id is hit.id)}
+def get_read_obj(hit, tn_read, tn_seqrecs):
+	read_result = {'id': hit.id, 'hsps': [], 'ends': [], 'result': None, 'len': hit.seq_len, 'read_seqrec': next(r for r in tn_seqrecs if r.id is hit.id)}
 	prev_end = 0
 	# each hsps represents a unique alignment in the read
 	# should be ~equal to the transposon in length, or at start or end of the sequence
