@@ -64,22 +64,20 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file):
 		
 		# We are querying the transposon against all the reads, so only one result with many hits is output
 		res = SearchIO.read(blast_filename, 'blast-xml')
-		print("ress.....")
 		tn_read_ids = [hit.id for hit in res.hits]
 
 		# filter the reads to just those with the transposon, write to file in case we want them later
 		all_reads = SeqIO.parse(reads_file, 'fasta')
 		tn_reads = [r for r in all_reads if r.id in tn_read_ids]
-		print("nums", len(tn_reads), print(len(res.hits)))
 		SeqIO.write(tn_reads, f'{basename}_tnreads.fasta', 'fasta')
 	if not tn_reads:
 		tn_reads = list([r for r in SeqIO.parse(f'{basename}_tnreads.fasta', 'fasta')])
-	print("lalala", len(tn_reads))
+
 	all_results = []
 	# each hit represents one or more matches of the query against a read sequence
 	for hit in res.hits:
 		tn_read = next(r for r in tn_reads if r.id == hit.id)
-		all_results.append(get_read_obj(hit, tn_read, tn_reads))
+		all_results.append(get_read_obj(hit, tn_read))
 	attach_alignments(all_results, basename)
 	with open(f'outputs/output_{reads_file}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
@@ -148,14 +146,8 @@ def attach_alignments(results, basename):
 			read['type'] = 'COINTEGRATE'
 	return results
 
-def get_read_obj(hit, tn_read, tn_reads):
-	try:
-		read_result = {'id': hit.id, 'hsps': [], 'ends': [], 'result': None, 'len': hit.seq_len, 'read_seqrec': next(r for r in tn_reads if r.id is hit.id)}
-	except:
-		print("Error")
-		print(hit.id, hit)
-		print(tn_reads[0].id, tn_reads[0])
-		raise Exception("problem")
+def get_read_obj(hit, tn_read):
+	read_result = {'id': hit.id, 'hsps': [], 'ends': [], 'result': None, 'len': hit.seq_len, 'read_seqrec': tn_read}
 
 	prev_end = 0
 	# each hsps represents a unique alignment in the read
