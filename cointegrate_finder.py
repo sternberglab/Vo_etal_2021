@@ -34,8 +34,8 @@ def main():
 	print("uploading outputs")
 	s3 = boto3.client('s3')
 	for filename in os.listdir('outputs'):
-		with open("outputs/{filename}") as file:
-			s3.upload_file(file, "sternberg-sequencing-data", f"pilot_samples/outputs/{filename}")
+		s3key = f"pilot_samples/outputs/{filename}"
+		s3.upload_file(f"outputs/{filename}", "sternberg-sequencing-data", s3key)
 	print("done")
 
 def download_s3(filename):
