@@ -5,17 +5,50 @@ import multiprocessing
 import subprocess
 import os
 import csv
+import boto3
+import botocore
 from pathlib import Path
 from simplesam import Reader as samReader
 
-reads_file = 'CCS_SLMS_23.fasta'
-tn_file = 'transposon_SLMS_23.fasta'
-plasmid_file = 'transposon_plasmid_SLMS23.fasta'
-genome_file = 'bl21de3-genome.fasta'
 
 
+def main():
+	os.makedirs(os.path.join(f"./outputs"), exist_ok=True)
+	with open('outputs/all.csv', 'w', newline='') as outfile:
+		writer = csv.writer(outfile)
+		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown'])
+	'''
+	reads_file = 'CCS_SLMS_23.fasta'
+	tn_file = 'transposon_SLMS_23.fasta'
+	plasmid_file = 'transposon_plasmid_SLMS23.fasta'
+	genome_file = 'bl21de3-genome.fasta'
+	'''
+	print("1")
+	process_sample('CCS_SLMS_22.fasta', 'SLMS_22_tn.fasta', 'SLMS_22_plasmid.fasta', 'bl21de3-genome.fasta')
+	print("2")
+	process_sample('CCS_SLMS_23.fasta', 'transposon_SLMS_23.fasta', 'transposon_plasmid_SLMS23.fasta', 'bw25113-reca-pb-genome.fasta')
+	print("3")
+	process_sample('CCS_SLMS_24.fasta', 'SLMS_24_tn.fasta', 'SLMS_24_plasmid.fasta', 'bw25113-reca-pb-genome.fasta')
+	print("4")
+	process_sample('CCS_SLMS_3.fasta', 'SLMS_3_tn.fasta', 'SLMS_3_plasmid.fasta', 'bl21de3-genome.fasta')
+	print("uploading outputs")
+	s3 = boto3.client('s3')
+	for filename in os.listdir('outputs'):
+		with open("outputs/{file}") as file:
+			s3.upload_file(file, "sternberg-sequencing-data", f"pilot_samples/outputs/{filename}")
+	print("done")
+
+def download_s3(filename):
+	if Path(filename).exists():
+		continue
+	s3 = boto3.client('s3')
+	s3.download_file('sternberg-sequencing-data', f'pilot_samples/{filename}', filename)
 
 def process_sample(reads_file, tn_file, plasmid_file, genome_file):
+	download_s3(reads_file)
+	download_s3(tn_file)
+	download_s3(plasmid_file)
+	download_s3(genome_file)
 	plasmid = SeqIO.read(plasmid_file, 'fasta')
 	tn = SeqIO.read(tn_file, 'fasta')
 	genome = SeqIO.read(genome_file, 'fasta')
@@ -42,9 +75,9 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file):
 	# each hit represents one or more matches of the query against a read sequence
 	for hit in res.hits:
 		tn_read = next(r for r in tn_reads if r.id == hit.id)
-		all_results.append(get_read_obj(hit, tn_read))
+		all_results.append(get_read_obj(hit, tn_read, reads_seqrecs))
 	attach_alignments(all_results, basename)
-	with open('output.csv', 'w', newline='') as outfile:
+	with open(f'outputs/output_{reads_file}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
 		writer.writerow(['read_id', 'type', 'hsps', 'ends', 'types'])
 		for read in all_results:
@@ -52,6 +85,19 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file):
 			ends = [e['id'][-19:] for e in read['ends']]
 			types = [e['type'] for e in read['ends']]
 			writer.writerow([read['id'], read['type'], hsps, ends, types])
+	with open(f'outputs/all.csv', 'a', newline='') as outfile:
+		writer = csv.writer(outfile)
+		cointegrates = [r for r in all_results if r['type'] is 'COINTEGRATE']
+		SeqIO.write([r['read_seqrec'] for r in cointegrates[:10]], f"outputs/{reads_file}_cointegrates.fasta", "fasta")
+		genome_insertions = [r for r in all_results if r['type'] is 'GENOME']
+		SeqIO.write([r['read_seqrec'] for r in genome_insertions[:10]], f"outputs/{reads_file}_genomic.fasta", "fasta")
+		plasmids = [r for r in all_results if r['type'] is 'pl']
+		SeqIO.write([r['read_seqrec'] for r in plasmids[:10]], f"outputs/{reads_file}_plasmids.fasta", "fasta")
+		insufficient = [r for r in all_results if r['type'] is 'partialRead-insufficient']
+		SeqIO.write([r['read_seqrec'] for r in insufficient[:10]], f"outputs/{reads_file}_insufficient.fasta", "fasta")
+		unknown = [r for r in all_results if r['type'] is 'unknown']
+		SeqIO.write([r['read_seqrec'] for r in unknown[:10]], f"outputs/{reads_file}_unknowns.fasta", "fasta")
+		writer.writerow([reads_file, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficient), len(unknown)])
 	print("done")
 
 def attach_alignments(results, basename):
@@ -98,8 +144,8 @@ def attach_alignments(results, basename):
 			read['type'] = 'COINTEGRATE'
 	return results
 
-def get_read_obj(hit, tn_read):
-	read_result = {'id': hit.id, 'hsps': [], 'ends': [], 'result': None, 'len': hit.seq_len}
+def get_read_obj(hit, tn_read, reads_seqrecs):
+	read_result = {'id': hit.id, 'hsps': [], 'ends': [], 'result': None, 'len': hit.seq_len, 'read_seqrec': next(r for r in reads_seqrecs if r.id is hit.id)}
 	prev_end = 0
 	# each hsps represents a unique alignment in the read
 	# should be ~equal to the transposon in length, or at start or end of the sequence
