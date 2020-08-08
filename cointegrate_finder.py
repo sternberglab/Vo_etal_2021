@@ -76,7 +76,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file):
 	for hit in res.hits:
 		tn_read = next(r for r in tn_reads if r.id == hit.id)
 		all_results.append(get_read_obj(hit, tn_read))
-	attach_alignments(all_results, basename, plasmid_file, genome)
+	attach_alignments(all_results, basename, plasmid_file, genome_file)
 	with open(f'outputs/output_{reads_file}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
 		writer.writerow(['read_id', 'type', 'hsps', 'ends', 'types'])
