@@ -144,8 +144,15 @@ def attach_alignments(results, basename):
 			read['type'] = 'COINTEGRATE'
 	return results
 
-def get_read_obj(hit, tn_read, tn_seqrecs):
-	read_result = {'id': hit.id, 'hsps': [], 'ends': [], 'result': None, 'len': hit.seq_len, 'read_seqrec': next(r for r in tn_seqrecs if r.id is hit.id)}
+def get_read_obj(hit, tn_read, tn_reads):
+	try:
+		read_result = {'id': hit.id, 'hsps': [], 'ends': [], 'result': None, 'len': hit.seq_len, 'read_seqrec': next(r for r in tn_reads if r.id is hit.id)}
+	except:
+		print("Error")
+		print(hit.id, hit)
+		print(tn_reads[0].id, tn_reads[0])
+		raise Exception("problem")
+
 	prev_end = 0
 	# each hsps represents a unique alignment in the read
 	# should be ~equal to the transposon in length, or at start or end of the sequence
