@@ -58,7 +58,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file):
 	plasmid_r = plasmid.seq[tn_start+len(tn.seq):tn_start+len(tn.seq)+20]
 
 	basename = "tmp/" + reads_file.split('.')[0]
-	if not Path(f'{basename}_tnreads.fasta').exists():
+	if True or not Path(f'{basename}_tnreads.fasta').exists():
 		blast_filename =  f'{basename}_blastresults.xml'
 		do_blast(tn_file, reads_file, blast_filename)
 		
@@ -69,6 +69,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file):
 		# filter the reads to just those with the transposon, write to file in case we want them later
 		all_reads = SeqIO.parse(reads_file, 'fasta')
 		tn_reads = [r for r in all_reads if r.id in tn_read_ids]
+		print(len(tn_reads), print(len(res.hits)))
 		SeqIO.write(tn_reads, f'{basename}_tnreads.fasta', 'fasta')
 	tn_reads = list([r for r in SeqIO.parse(f'{basename}_tnreads.fasta', 'fasta')])
 
