@@ -59,7 +59,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file):
 
 	basename = "tmp/" + reads_file.split('.')[0]
 	blast_filename =  f'{basename}_blastresults.xml'
-	do_blast('transposon_SLMS_23.fasta', 'CCS_SLMS_23.fasta', blast_filename)
+	do_blast(tn_file, reads_file, blast_filename)
 	
 	# We are querying the transposon against all the reads, so only one result with many hits is output
 	res = SearchIO.read(blast_filename, 'blast-xml')
