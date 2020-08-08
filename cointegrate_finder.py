@@ -78,7 +78,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file):
 	for hit in res.hits:
 		tn_read = next(r for r in tn_reads if r.id == hit.id)
 		all_results.append(get_read_obj(hit, tn_read))
-	attach_alignments(all_results, basename)
+	attach_alignments(all_results, basename, plasmid_file, genome_file)
 	with open(f'outputs/output_{reads_file}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
 		writer.writerow(['read_id', 'type', 'hsps', 'ends', 'types'])
@@ -102,7 +102,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file):
 		writer.writerow([reads_file, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficient), len(unknown)])
 	print("done")
 
-def attach_alignments(results, basename):
+def attach_alignments(results, basename, plasmid_file, genome_file):
 	all_fp_seqs = [end['seqrec'] for r in results for end in r['ends']]
 	tmp_fp_fasta_name = f'{basename}_fps.fasta'
 	SeqIO.write(all_fp_seqs, tmp_fp_fasta_name, 'fasta')
