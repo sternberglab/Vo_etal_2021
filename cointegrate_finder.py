@@ -93,7 +93,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file):
 		SeqIO.write([r['read_seqrec'] for r in genome_insertions[:10]], f"outputs/{reads_file}_genomic.fasta", "fasta")
 		plasmids = [r for r in all_results if r['type'] is 'pl']
 		SeqIO.write([r['read_seqrec'] for r in plasmids[:10]], f"outputs/{reads_file}_plasmids.fasta", "fasta")
-		insufficients = [r for r in all_results if r['type'] is 'partialRead-insufficient']
+		insufficients = [r for r in all_results if r['type'] is 'partialRead']
 		print(set([r['type'] for r in all_results]))
 		SeqIO.write([r['read_seqrec'] for r in insufficients[:10]], f"outputs/{reads_file}_insufficient.fasta", "fasta")
 		unknown = [r for r in all_results if r['type'] is 'unknown']
@@ -134,7 +134,7 @@ def attach_alignments(results, basename, plasmid_file, genome_file):
 					end['type'] = 'unknown'
 		types = [e['type'] for e in read['ends']]
 		if len(types) < 2:
-			read['type'] = 'partialRead-insufficient'
+			read['type'] = 'partialRead'
 		elif len(set(types)) == 1 and types[0] == 'pl':
 			read['type'] = 'pl'
 		elif len(set(types)) == 1 and types[0] == 'gn':
