@@ -24,13 +24,13 @@ def main():
 	genome_file = 'bl21de3-genome.fasta'
 	'''
 	print("1")
-	#process_sample('CCS_SLMS_22.fasta', 'SLMS_22_tn.fasta', 'SLMS_22_plasmid.fasta', 'bl21de3-genome.fasta')
+	process_sample('CCS_SLMS_22.fasta', 'SLMS_22_tn.fasta', 'SLMS_22_plasmid.fasta', 'bl21de3-genome.fasta')
 	print("2")
-	#process_sample('CCS_SLMS_23.fasta', 'transposon_SLMS_23.fasta', 'transposon_plasmid_SLMS23.fasta', 'bw25113-reca-pb-genome.fasta')
+	process_sample('CCS_SLMS_23.fasta', 'transposon_SLMS_23.fasta', 'transposon_plasmid_SLMS23.fasta', 'bw25113-reca-pb-genome.fasta')
 	print("3")
-	#process_sample('CCS_SLMS_24.fasta', 'SLMS_24_tn.fasta', 'SLMS_24_plasmid.fasta', 'bw25113-reca-pb-genome.fasta')
+	process_sample('CCS_SLMS_24.fasta', 'SLMS_24_tn.fasta', 'SLMS_24_plasmid.fasta', 'bw25113-reca-pb-genome.fasta')
 	print("4")
-	#process_sample('CCS_SLMS_3.fasta', 'SLMS_3_tn.fasta', 'SLMS_3_plasmid.fasta', 'bl21de3-genome.fasta')
+	process_sample('CCS_SLMS_3.fasta', 'SLMS_3_tn.fasta', 'SLMS_3_plasmid.fasta', 'bl21de3-genome.fasta')
 	print("uploading outputs")
 	s3 = boto3.client('s3')
 	for filename in os.listdir('outputs'):
