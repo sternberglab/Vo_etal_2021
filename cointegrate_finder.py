@@ -1,6 +1,8 @@
 from Bio import SeqIO, SearchIO
 from Bio.SeqRecord import SeqRecord
 from Bio.Blast.Applications import NcbiblastnCommandline
+import gzip
+import shutil
 import multiprocessing
 import subprocess
 import os
@@ -14,7 +16,7 @@ def main():
 	os.makedirs(os.path.join(f"./outputs"), exist_ok=True)
 	os.makedirs(os.path.join(f"./bt2index"), exist_ok=True)
 	os.makedirs(os.path.join(f"./tmp"), exist_ok=True)
-	with open('outputs/all.csv', 'w', newline='') as outfile:
+	with open('outputs/all_real.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
 		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown'])
 	
@@ -37,9 +39,22 @@ def main():
 	print("done")
 
 def download_s3(filename, isNotSample=True):
-	local_path = filename if isNotSample else "sample.fasta"
+	isGzip = False
+	if isNotSample:
+		local_path = filename
+	else:
+		if filename.endswith('.gz'):
+			isGzip = True
+			local_path = "sample.fasta.gz"
+		else:
+			local_path = "sample.fasta"
 	s3 = boto3.client('s3')
-	s3.download_file('sternberg-sequencing-data', f'mssm/{filename}', filename)
+	s3.download_file('sternberg-sequencing-data', f'mssm/{filename}', local_path)
+	if isGzip:
+		with gzip.open(local_path, 'rb') as f_in:
+		    with open(local_path[:-3], 'wb') as f_out:
+		        shutil.copyfileobj(f_in, f_out)
+		local_path = local_path[:-3]
 	return local_path
 
 def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample):
