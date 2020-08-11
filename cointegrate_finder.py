@@ -17,38 +17,36 @@ def main():
 	with open('outputs/all.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
 		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown'])
-	'''
-	reads_file = 'CCS_SLMS_23.fasta'
-	tn_file = 'transposon_SLMS_23.fasta'
-	plasmid_file = 'transposon_plasmid_SLMS23.fasta'
-	genome_file = 'bl21de3-genome.fasta'
-	'''
-	print("1")
-	process_sample('CCS_SLMS_22.fasta', 'SLMS_22_tn.fasta', 'SLMS_22_plasmid.fasta', 'bl21de3-genome.fasta')
-	print("2")
-	process_sample('CCS_SLMS_23.fasta', 'transposon_SLMS_23.fasta', 'transposon_plasmid_SLMS23.fasta', 'bw25113-reca-pb-genome.fasta')
-	print("3")
-	process_sample('CCS_SLMS_24.fasta', 'SLMS_24_tn.fasta', 'SLMS_24_plasmid.fasta', 'bw25113-reca-pb-genome.fasta')
-	print("4")
-	process_sample('CCS_SLMS_3.fasta', 'SLMS_3_tn.fasta', 'SLMS_3_plasmid.fasta', 'bl21de3-genome.fasta')
-	print("uploading outputs")
+	
+	with open('input.csv', 'r') as infile:
+		reader = csv.DictReader(infile, fieldnames=['reads', 'tn', 'plasmid', 'genome'])
+		for row in reader:
+			reads_file = row['reads']
+			tn_file = row['tn']
+			plasmid_file = row['plasmid']
+			genome_file = row['genome']
+			
+			sample_name_start = reads_file.find('_SLMS_')
+			sample = reads_file[sample_name_start+1:sample_name_start+9]
+			process_sample(reads_file, tn_file, plasmid_file, genome_file, sample)
+
 	s3 = boto3.client('s3')
 	for filename in os.listdir('outputs'):
-		s3key = f"pilot_samples/outputs/{filename}"
+		s3key = f"pilot_samples/outputs_big/{filename}"
 		s3.upload_file(f"outputs/{filename}", "sternberg-sequencing-data", s3key)
 	print("done")
 
-def download_s3(filename):
-	if Path(filename).exists():
-		return
+def download_s3(filename, isNotSample=True):
+	local_path = filename if isNotSample else "sample.fasta"
 	s3 = boto3.client('s3')
-	s3.download_file('sternberg-sequencing-data', f'pilot_samples/{filename}', filename)
+	s3.download_file('sternberg-sequencing-data', f'mssm/{filename}', filename)
+	return local_path
 
-def process_sample(reads_file, tn_file, plasmid_file, genome_file):
-	download_s3(reads_file)
-	download_s3(tn_file)
-	download_s3(plasmid_file)
-	download_s3(genome_file)
+def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample):
+	reads_file = download_s3(reads_file, False)
+	tn_file = download_s3(tn_file)
+	plasmid_file = download_s3(plasmid_file)
+	genome_file = download_s3(genome_file)
 	plasmid = SeqIO.read(plasmid_file, 'fasta')
 	tn = SeqIO.read(tn_file, 'fasta')
 	genome = SeqIO.read(genome_file, 'fasta')
@@ -57,7 +55,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file):
 	plasmid_l = plasmid.seq[tn_start-20:tn_start]
 	plasmid_r = plasmid.seq[tn_start+len(tn.seq):tn_start+len(tn.seq)+20]
 
-	basename = "tmp/" + reads_file.split('.')[0]
+	basename = "tmp/" + sample
 	blast_filename =  f'{basename}_blastresults.xml'
 	do_blast(tn_file, reads_file, blast_filename)
 	
@@ -77,27 +75,32 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file):
 		tn_read = next(r for r in tn_reads if r.id == hit.id)
 		all_results.append(get_read_obj(hit, tn_read))
 	attach_alignments(all_results, basename, plasmid_file, genome_file)
-	with open(f'outputs/output_{reads_file}.csv', 'w', newline='') as outfile:
+	with open(f'outputs/output_{sample}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
 		writer.writerow(['read_id', 'type', 'hsps', 'ends', 'types'])
 		for read in all_results:
 			hsps = ['-'.join([str(i) for h in read['hsps'] for i in h])]
 			ends = [e['id'][-19:] for e in read['ends']]
 			types = [e['type'] for e in read['ends']]
+			read['end_types'] = types
 			writer.writerow([read['id'], read['type'], hsps, ends, types])
 	with open(f'outputs/all.csv', 'a', newline='') as outfile:
 		writer = csv.writer(outfile)
 		cointegrates = [r for r in all_results if r['type'] is 'COINTEGRATE']
-		SeqIO.write([r['read_seqrec'] for r in cointegrates[:10]], f"outputs/{reads_file}_cointegrates.fasta", "fasta")
+		# only use full cointegrate sequences for the sample fasta output
+		selected_cointegrates = [r for r in cointegrates if len(r['end_types']) is 4]
+		if len(selected_cointegrates) < 2 and len(cointegrates) > 9:
+			selected_cointegrates = cointegrates
+		SeqIO.write([r['read_seqrec'] for r in selected_cointegrates[:10]], f"outputs/{sample}_cointegrates.fasta", "fasta")
 		genome_insertions = [r for r in all_results if r['type'] is 'GENOME']
-		SeqIO.write([r['read_seqrec'] for r in genome_insertions[:10]], f"outputs/{reads_file}_genomic.fasta", "fasta")
+		SeqIO.write([r['read_seqrec'] for r in genome_insertions[:10]], f"outputs/{sample}_genomic.fasta", "fasta")
 		plasmids = [r for r in all_results if r['type'] is 'pl']
-		SeqIO.write([r['read_seqrec'] for r in plasmids[:10]], f"outputs/{reads_file}_plasmids.fasta", "fasta")
+		SeqIO.write([r['read_seqrec'] for r in plasmids[:10]], f"outputs/{sample}_plasmids.fasta", "fasta")
 		insufficients = [r for r in all_results if r['type'] is 'partialRead']
-		SeqIO.write([r['read_seqrec'] for r in insufficients[:10]], f"outputs/{reads_file}_insufficient.fasta", "fasta")
+		SeqIO.write([r['read_seqrec'] for r in insufficients[:10]], f"outputs/{sample}_insufficient.fasta", "fasta")
 		unknown = [r for r in all_results if r['type'] is 'unknown']
-		SeqIO.write([r['read_seqrec'] for r in unknown[:10]], f"outputs/{reads_file}_unknowns.fasta", "fasta")
-		writer.writerow([reads_file, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficients), len(unknown)])
+		SeqIO.write([r['read_seqrec'] for r in unknown[:10]], f"outputs/{sample}_unknowns.fasta", "fasta")
+		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficients), len(unknown)])
 	print("done")
 
 def attach_alignments(results, basename, plasmid_file, genome_file):
