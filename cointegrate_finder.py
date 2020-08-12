@@ -23,33 +23,35 @@ def main():
 	with open('input.csv', 'r') as infile:
 		reader = csv.DictReader(infile, fieldnames=['reads', 'tn', 'plasmid', 'genome'])
 		for row in reader:
-			reads_file = row['reads']
-			tn_file = row['tn']
-			plasmid_file = row['plasmid']
-			genome_file = row['genome']
-			
-			sample_name_start = reads_file.find('_SLMS_')
-			sample = reads_file[sample_name_start+1:sample_name_start+9]
+			reads_file = row['Reads File']
+			tn_file = row['Tn File']
+			plasmid_file = row['Plasmid file']
+			genome_file = row['Genome File']
+			sample = row['Sample Code']
 			process_sample(reads_file, tn_file, plasmid_file, genome_file, sample)
 
 	s3 = boto3.client('s3')
 	for filename in os.listdir('outputs'):
-		s3key = f"pilot_samples/outputs_big/{filename}"
+		s3key = f"cointegrate_outputs/{filename}"
 		s3.upload_file(f"outputs/{filename}", "sternberg-sequencing-data", s3key)
 	print("done")
 
 def download_s3(filename, isNotSample=True):
+
 	isGzip = False
 	if isNotSample:
 		local_path = filename
+		s3key = f'mssm/input_files/{filename}'
 	else:
+		s3key = f'mssm/{filename}'
 		if filename.endswith('.gz'):
 			isGzip = True
 			local_path = "sample.fasta.gz"
 		else:
 			local_path = "sample.fasta"
+
 	s3 = boto3.client('s3')
-	s3.download_file('sternberg-sequencing-data', f'mssm/{filename}', local_path)
+	s3.download_file('sternberg-sequencing-data', s3key, local_path)
 	if isGzip:
 		with gzip.open(local_path, 'rb') as f_in:
 		    with open(local_path[:-3], 'wb') as f_out:
