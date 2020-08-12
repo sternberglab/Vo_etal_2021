@@ -25,7 +25,6 @@ def main():
 	with open('input.csv', 'r', encoding='utf-8-sig') as infile:
 		reader = csv.DictReader(infile)
 		for row in reader:
-			print(row)
 			reads_file = row['Reads File']
 			tn_file = row['Tn File']
 			plasmid_file = row['Plasmid File']
