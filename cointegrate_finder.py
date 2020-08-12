@@ -23,8 +23,9 @@ def main():
 		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown'])
 	
 	with open('input.csv', 'r') as infile:
-		reader = csv.DictReader(infile, fieldnames=['Reads File', 'Tn File', 'Plasmid File', 'Genome File', 'Sample Code'])
+		reader = csv.DictReader(infile)
 		for row in reader:
+			print(row)
 			reads_file = row['Reads File']
 			tn_file = row['Tn File']
 			plasmid_file = row['Plasmid File']
