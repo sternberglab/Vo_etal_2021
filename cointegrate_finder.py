@@ -21,11 +21,11 @@ def main():
 		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown'])
 	
 	with open('input.csv', 'r') as infile:
-		reader = csv.DictReader(infile, fieldnames=['reads', 'tn', 'plasmid', 'genome'])
+		reader = csv.DictReader(infile, fieldnames=['Reads File', 'Tn File', 'Plasmid File', 'Genome File', 'Sample Code'])
 		for row in reader:
 			reads_file = row['Reads File']
 			tn_file = row['Tn File']
-			plasmid_file = row['Plasmid file']
+			plasmid_file = row['Plasmid File']
 			genome_file = row['Genome File']
 			sample = row['Sample Code']
 			process_sample(reads_file, tn_file, plasmid_file, genome_file, sample)
