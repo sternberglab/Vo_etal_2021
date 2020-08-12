@@ -22,7 +22,7 @@ def main():
 		writer = csv.writer(outfile)
 		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown'])
 	
-	with open('input.csv', 'r') as infile:
+	with open('input.csv', 'r', encoding='utf-8-sig') as infile:
 		reader = csv.DictReader(infile)
 		for row in reader:
 			print(row)
