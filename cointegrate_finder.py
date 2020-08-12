@@ -30,7 +30,10 @@ def main():
 			plasmid_file = row['Plasmid File']
 			genome_file = row['Genome File']
 			sample = row['Sample Code']
+			print(f"Processing {sample}...")
+			print("-----")
 			process_sample(reads_file, tn_file, plasmid_file, genome_file, sample)
+			print("-----")
 
 	s3 = boto3.client('s3')
 	for filename in os.listdir('outputs'):
@@ -39,7 +42,6 @@ def main():
 	print("done")
 
 def download_s3(filename, isNotSample=True):
-
 	isGzip = False
 	if isNotSample:
 		local_path = filename
@@ -51,7 +53,7 @@ def download_s3(filename, isNotSample=True):
 			local_path = "sample.fasta.gz"
 		else:
 			local_path = "sample.fasta"
-
+	print(f"Downloading...{s3key}")
 	s3 = boto3.client('s3')
 	s3.download_file('sternberg-sequencing-data', s3key, local_path)
 	if isGzip:
