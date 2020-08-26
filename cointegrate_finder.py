@@ -2,6 +2,7 @@ from Bio import SeqIO, SearchIO
 from Bio.SeqRecord import SeqRecord
 from Bio.Blast.Applications import NcbiblastnCommandline
 import gzip
+from datetime import date
 import shutil
 import multiprocessing
 import subprocess
@@ -18,7 +19,8 @@ def main():
 	os.makedirs(os.path.join(f"./outputs"), exist_ok=True)
 	os.makedirs(os.path.join(f"./bt2index"), exist_ok=True)
 	os.makedirs(os.path.join(f"./tmp"), exist_ok=True)
-	with open('outputs/all.csv', 'w', newline='') as outfile:
+	today = date.today()
+	with open(f'outputs/{today.year}-{today.month}-{today.day}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
 		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown'])
 	
