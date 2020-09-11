@@ -75,6 +75,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample):
 	plasmid = SeqIO.read(plasmid_file, 'fasta')
 	tn = SeqIO.read(tn_file, 'fasta')
 	genome = SeqIO.read(genome_file, 'fasta')
+	tn_length = len(tn)
 
 	tn_start = plasmid.seq.find(tn.seq)
 	plasmid_l = plasmid.seq[tn_start-20:tn_start]
@@ -98,9 +99,9 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample):
 	# each hit represents one or more matches of the query against a read sequence
 	for hit in res.hits:
 		tn_read = next(r for r in tn_reads if r.id == hit.id)
-		read_obj = get_read_obj(hit, tn_read)
+		read_obj = get_read_obj(hit, tn_read, tn_length)
 		if read_obj:
-			all_results.append(get_read_obj(hit, tn_read))
+			all_results.append(read_obj)
 	attach_alignments(all_results, basename, plasmid_file, genome_file)
 	with open(f'outputs/output_{sample}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
@@ -184,7 +185,7 @@ def attach_alignments(results, basename, plasmid_file, genome_file):
 			read['type'] = 'COINTEGRATE'
 	return results
 
-def get_read_obj(hit, tn_read):
+def get_read_obj(hit, tn_read, tn_length):
 	read_result = {'id': hit.id, 'hsps': [], 'ends': [], 'result': None, 'len': hit.seq_len, 'read_seqrec': tn_read}
 
 	prev_end = 0
@@ -192,7 +193,7 @@ def get_read_obj(hit, tn_read):
 	# should be ~equal to the transposon in length, or at start or end of the sequence
 	for (i, hsp) in enumerate(sorted(hit.hsps, key=lambda x: x.hit_start)):
 		hit_length = hsp.hit_end - hsp.hit_start
-		if hit_length < 1000 or hsp.evalue > 0.000001:
+		if hit_length < (tn_length - 30) or hsp.evalue > 0.000001:
 			continue
 		read_result['hsps'].append((hsp.hit_start, hsp.hit_end))
 		is_start = hsp.hit_start < 5
