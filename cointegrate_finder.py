@@ -13,6 +13,8 @@ import botocore
 from pathlib import Path
 from simplesam import Reader as samReader
 
+today = date.today()
+output_name = f'all-{today.year}-{today.month}-{today.day}'
 # install blast locally
 # curl -O ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.10.1+-x64-linux.tar.gz && tar xzf ncbi-blast-2.10.1+-x64-linux.tar.gz && sudo cp ncbi-blast-2.10.1+/bin/* /usr/local/bin
 def main():
@@ -20,7 +22,7 @@ def main():
 	os.makedirs(os.path.join(f"./bt2index"), exist_ok=True)
 	os.makedirs(os.path.join(f"./tmp"), exist_ok=True)
 	today = date.today()
-	with open(f'outputs/{today.year}-{today.month}-{today.day}.csv', 'w', newline='') as outfile:
+	with open(f'outputs/{output_name}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
 		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown'])
 	
@@ -47,7 +49,7 @@ def download_s3(filename, isNotSample=True):
 	isGzip = False
 	if isNotSample:
 		local_path = filename
-		s3key = f'mssm/input_files/{filename}'
+		s3key = f'mssm_inputs/{filename}'
 	else:
 		s3key = f'mssm/{filename}'
 		if filename.endswith('.gz'):
@@ -56,8 +58,9 @@ def download_s3(filename, isNotSample=True):
 		else:
 			local_path = "sample.fasta"
 	print(f"Downloading...{s3key}")
-	s3 = boto3.client('s3')
-	s3.download_file('sternberg-sequencing-data', s3key, local_path)
+	if isNotSample and not Path(local_path).exists():
+		s3 = boto3.client('s3')
+		s3.download_file('sternberg-sequencing-data', s3key, local_path)
 	if isGzip:
 		with gzip.open(local_path, 'rb') as f_in:
 		    with open(local_path[:-3], 'wb') as f_out:
@@ -90,39 +93,54 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample):
 	all_reads = SeqIO.parse(reads_file, 'fasta')
 	tn_reads = [r for r in all_reads if r.id in tn_read_ids]
 	SeqIO.write(tn_reads, f'{basename}_tnreads.fasta', 'fasta')
-	#tn_reads = list([r for r in SeqIO.parse(f'{basename}_tnreads.fasta', 'fasta')])
+	tn_reads = list([r for r in SeqIO.parse(f'{basename}_tnreads.fasta', 'fasta')])
 
 	all_results = []
+	print(len(res.hits))
+	for i in range(5):
+		print(res.hits[i])
 	# each hit represents one or more matches of the query against a read sequence
 	for hit in res.hits:
 		tn_read = next(r for r in tn_reads if r.id == hit.id)
-		all_results.append(get_read_obj(hit, tn_read))
+		read_obj = get_read_obj(hit, tn_read)
+		if read_obj:
+			all_results.append(get_read_obj(hit, tn_read))
 	attach_alignments(all_results, basename, plasmid_file, genome_file)
 	with open(f'outputs/output_{sample}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
 		writer.writerow(['read_id', 'type', 'hsps', 'ends', 'types'])
 		for read in all_results:
-			hsps = ['-'.join([str(i) for h in read['hsps'] for i in h])]
+			hsps_formatted = ''
+			for pair in read['hsps']:
+				if len(hsps_formatted):
+					hsps_formatted += ' _ '
+				hsps_formatted += '-'.join([str(i) for i in pair])
+			hsps = hsps_formatted
 			ends = [e['id'][-19:] for e in read['ends']]
 			types = [e['type'] for e in read['ends']]
 			read['end_types'] = types
 			writer.writerow([read['id'], read['type'], hsps, ends, types])
-	with open(f'outputs/all.csv', 'a', newline='') as outfile:
+	with open(f'outputs/{output_name}.csv', 'a', newline='') as outfile:
 		writer = csv.writer(outfile)
 		cointegrates = [r for r in all_results if r['type'] is 'COINTEGRATE']
 		# only use full cointegrate sequences for the sample fasta output
 		selected_cointegrates = [r for r in cointegrates if len(r['end_types']) is 4]
 		if len(selected_cointegrates) < 2 and len(cointegrates) > 9:
 			selected_cointegrates = cointegrates
-		SeqIO.write([r['read_seqrec'] for r in selected_cointegrates[:10]], f"outputs/{sample}_cointegrates.fasta", "fasta")
+		if len(selected_cointegrates):
+			SeqIO.write([r['read_seqrec'] for r in selected_cointegrates[:10]], f"outputs/{sample}_cointegrates.fasta", "fasta")
 		genome_insertions = [r for r in all_results if r['type'] is 'GENOME']
-		SeqIO.write([r['read_seqrec'] for r in genome_insertions[:10]], f"outputs/{sample}_genomic.fasta", "fasta")
+		if len(genome_insertions):
+			SeqIO.write([r['read_seqrec'] for r in genome_insertions[:10]], f"outputs/{sample}_genomic.fasta", "fasta")
 		plasmids = [r for r in all_results if r['type'] is 'pl']
-		SeqIO.write([r['read_seqrec'] for r in plasmids[:10]], f"outputs/{sample}_plasmids.fasta", "fasta")
+		if len(plasmids):
+			SeqIO.write([r['read_seqrec'] for r in plasmids[:10]], f"outputs/{sample}_plasmids.fasta", "fasta")
 		insufficients = [r for r in all_results if r['type'] is 'partialRead']
-		SeqIO.write([r['read_seqrec'] for r in insufficients[:10]], f"outputs/{sample}_insufficient.fasta", "fasta")
+		if len(insufficients):
+			SeqIO.write([r['read_seqrec'] for r in insufficients[:10]], f"outputs/{sample}_insufficient.fasta", "fasta")
 		unknown = [r for r in all_results if r['type'] is 'unknown']
-		SeqIO.write([r['read_seqrec'] for r in unknown[:10]], f"outputs/{sample}_unknowns.fasta", "fasta")
+		if len(unknown):
+			SeqIO.write([r['read_seqrec'] for r in unknown[:10]], f"outputs/{sample}_unknowns.fasta", "fasta")
 		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficients), len(unknown)])
 	print("done")
 
@@ -177,10 +195,10 @@ def get_read_obj(hit, tn_read):
 	# each hsps represents a unique alignment in the read
 	# should be ~equal to the transposon in length, or at start or end of the sequence
 	for (i, hsp) in enumerate(sorted(hit.hsps, key=lambda x: x.hit_start)):
-		read_result['hsps'].append((hsp.hit_start, hsp.hit_end))
 		hit_length = hsp.hit_end - hsp.hit_start
 		if hit_length < 100 or hsp.evalue > 0.00001:
 			continue
+		read_result['hsps'].append((hsp.hit_start, hsp.hit_end))
 		is_start = hsp.hit_start < 5
 		is_end = hit.seq_len - hsp.hit_end < 5
 
@@ -207,11 +225,12 @@ def get_read_obj(hit, tn_read):
 					'seqrec': SeqRecord(right_fp, id=seqid, description=seqid, name=seqid)
 				})
 		prev_end = hsp.hit_end
-	return read_result
+	if len(read_result["hsps"]):
+		return read_result
 
 def do_blast(query_file, subject_file, output_name):
-	if Path(f'./{output_name}').exists():
-		return output_name
+	#if Path(f'./{output_name}').exists():
+	#	return output_name
 	cline = NcbiblastnCommandline(query=query_file, subject=subject_file, num_alignments=10000, out=Path(f'./{output_name}'), outfmt=5)
 	subprocess.run(str(cline), shell=True)
 	return output_name
