@@ -26,7 +26,7 @@ def main():
 		writer = csv.writer(outfile)
 		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown'])
 	
-	with open('input2.csv', 'r', encoding='utf-8-sig') as infile:
+	with open('input.csv', 'r', encoding='utf-8-sig') as infile:
 		reader = csv.DictReader(infile)
 		for row in reader:
 			reads_file = row['Reads File']
@@ -96,9 +96,6 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample):
 	tn_reads = list([r for r in SeqIO.parse(f'{basename}_tnreads.fasta', 'fasta')])
 
 	all_results = []
-	print(len(res.hits))
-	for i in range(5):
-		print(res.hits[i])
 	# each hit represents one or more matches of the query against a read sequence
 	for hit in res.hits:
 		tn_read = next(r for r in tn_reads if r.id == hit.id)
@@ -196,7 +193,7 @@ def get_read_obj(hit, tn_read):
 	# should be ~equal to the transposon in length, or at start or end of the sequence
 	for (i, hsp) in enumerate(sorted(hit.hsps, key=lambda x: x.hit_start)):
 		hit_length = hsp.hit_end - hsp.hit_start
-		if hit_length < 100 or hsp.evalue > 0.00001:
+		if hit_length < 1000 or hsp.evalue > 0.000001:
 			continue
 		read_result['hsps'].append((hsp.hit_start, hsp.hit_end))
 		is_start = hsp.hit_start < 5
