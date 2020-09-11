@@ -57,10 +57,9 @@ def download_s3(filename, isNotSample=True):
 			local_path = "sample.fasta.gz"
 		else:
 			local_path = "sample.fasta"
-	print(f"Downloading...{s3key}")
-	if isNotSample and not Path(local_path).exists():
-		s3 = boto3.client('s3')
-		s3.download_file('sternberg-sequencing-data', s3key, local_path)
+	print(f"Downloading... {s3key}")
+	s3 = boto3.client('s3')
+	s3.download_file('sternberg-sequencing-data', s3key, local_path)
 	if isGzip:
 		with gzip.open(local_path, 'rb') as f_in:
 		    with open(local_path[:-3], 'wb') as f_out:
