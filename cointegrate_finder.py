@@ -17,6 +17,8 @@ today = date.today()
 output_name = f'all-{today.year}-{today.month}-{today.day}'
 # install blast locally
 # curl -O ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.10.1+-x64-linux.tar.gz && tar xzf ncbi-blast-2.10.1+-x64-linux.tar.gz && sudo cp ncbi-blast-2.10.1+/bin/* /usr/local/bin
+run_local = False
+
 def main():
 	os.makedirs(os.path.join(f"./outputs"), exist_ok=True)
 	os.makedirs(os.path.join(f"./bt2index"), exist_ok=True)
@@ -24,7 +26,7 @@ def main():
 	today = date.today()
 	with open(f'outputs/{output_name}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
-		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown'])
+		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown', 'Sample Description'])
 	
 	with open('input.csv', 'r', encoding='utf-8-sig') as infile:
 		reader = csv.DictReader(infile)
@@ -34,15 +36,17 @@ def main():
 			plasmid_file = row['Plasmid File']
 			genome_file = row['Genome File']
 			sample = row['Sample Code']
+			sample_desc = row['Sample Desc']
 			print(f"Processing {sample}...")
 			print("-----")
-			process_sample(reads_file, tn_file, plasmid_file, genome_file, sample)
+			process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sample_desc)
 			print("-----")
 
-	s3 = boto3.client('s3')
-	for filename in os.listdir('outputs'):
-		s3key = f"cointegrate_outputs/{filename}"
-		s3.upload_file(f"outputs/{filename}", "sternberg-sequencing-data", s3key)
+	if not run_local:
+		s3 = boto3.client('s3')
+		for filename in os.listdir('outputs'):
+			s3key = f"cointegrate_outputs/{filename}"
+			s3.upload_file(f"outputs/{filename}", "sternberg-sequencing-data", s3key)
 	print("done")
 
 def download_s3(filename, isNotSample=True):
@@ -67,8 +71,9 @@ def download_s3(filename, isNotSample=True):
 		local_path = local_path[:-3]
 	return local_path
 
-def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample):
+def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sample_desc):
 	reads_file = download_s3(reads_file, False)
+	# reads_file = 'sample.fasta'
 	tn_file = download_s3(tn_file)
 	plasmid_file = download_s3(plasmid_file)
 	genome_file = download_s3(genome_file)
@@ -82,7 +87,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample):
 	plasmid_r = plasmid.seq[tn_start+len(tn.seq):tn_start+len(tn.seq)+20]
 
 	basename = "tmp/" + sample
-	blast_filename =  f'{basename}_blastresults.xml'
+	blast_filename =  f'cointegrate_outputs/{sample}_blastresults.xml'
 	do_blast(tn_file, reads_file, blast_filename)
 	
 	# We are querying the transposon against all the reads, so only one result with many hits is output
@@ -138,7 +143,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample):
 		unknown = [r for r in all_results if r['type'] is 'unknown']
 		if len(unknown):
 			SeqIO.write([r['read_seqrec'] for r in unknown[:10]], f"outputs/{sample}_unknowns.fasta", "fasta")
-		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficients), len(unknown)])
+		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficients), len(unknown), sample_desc])
 	print("done")
 
 def attach_alignments(results, basename, plasmid_file, genome_file):
