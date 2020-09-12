@@ -87,7 +87,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 	plasmid_r = plasmid.seq[tn_start+len(tn.seq):tn_start+len(tn.seq)+20]
 
 	basename = "tmp/" + sample
-	blast_filename =  f'cointegrate_outputs/{sample}_blastresults.xml'
+	blast_filename =  f'outputs/{sample}_blastresults.xml'
 	do_blast(tn_file, reads_file, blast_filename)
 	
 	# We are querying the transposon against all the reads, so only one result with many hits is output
