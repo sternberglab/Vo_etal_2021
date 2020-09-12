@@ -28,7 +28,7 @@ def main():
 		writer = csv.writer(outfile)
 		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown', 'Sample Description'])
 	
-	with open('input2.csv', 'r', encoding='utf-8-sig') as infile:
+	with open('input.csv', 'r', encoding='utf-8-sig') as infile:
 		reader = csv.DictReader(infile)
 		for row in reader:
 			reads_file = row['Reads File']
@@ -87,7 +87,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 	plasmid_r = plasmid.seq[tn_start+len(tn.seq):tn_start+len(tn.seq)+20]
 
 	basename = "tmp/" + sample
-	blast_filename =  f'outputs/{sample}_blastresults.xml'
+	blast_filename =  f'{basename}_blastresults.xml'
 	do_blast(tn_file, reads_file, blast_filename)
 	
 	# We are querying the transposon against all the reads, so only one result with many hits is output
