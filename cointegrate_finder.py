@@ -203,7 +203,7 @@ def get_read_obj(hit, tn_read, tn_length):
 			continue
 		read_result['hsps'].append((hsp.hit_start, hsp.hit_end))
 		is_start = hsp.hit_start < 5
-		is_end = hit.seq_len - hsp.hit_end < 5
+		is_end = tn_length - hsp.hit_end < 5
 
 		if not is_start:
 			seqid = f'{hit.id}___{i}l'
