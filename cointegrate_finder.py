@@ -121,8 +121,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 			ends = [e['id'][-19:] for e in read['ends']]
 			types = [e['type'] for e in read['ends']]
 			read['end_types'] = types
-			read_length = len(read['read_seqrec'].seq)
-			writer.writerow([read['id'], read['type'], hsps, ends, types, read_length])
+			writer.writerow([read['id'], read['type'], hsps, ends, types, read['len']])
 	with open(f'outputs/{output_name}.csv', 'a', newline='') as outfile:
 		writer = csv.writer(outfile)
 		cointegrates = [r for r in all_results if r['type'] is 'COINTEGRATE']
@@ -195,15 +194,17 @@ def get_read_obj(hit, tn_read, tn_length):
 	read_result = {'id': hit.id, 'hsps': [], 'ends': [], 'result': None, 'len': hit.seq_len, 'read_seqrec': tn_read}
 
 	prev_end = 0
+	valid_hits = [hsps for hsps in hit.hsps if (hsp.hit_end - hsp.hit_start) > (tn_length - 30)]
+	valid_hits = sorted(valid_hits, key=lambda x: x.hit_start)
 	# each hsps represents a unique alignment in the read
 	# should be ~equal to the transposon in length, or at start or end of the sequence
-	for (i, hsp) in enumerate(sorted(hit.hsps, key=lambda x: x.hit_start)):
+	for (i, hsp) in enumerate(valid_hits):
 		hit_length = hsp.hit_end - hsp.hit_start
-		if hit_length < (tn_length - 30) or hsp.evalue > 0.000001:
+		if hsp.evalue > 0.000001:
 			continue
 		read_result['hsps'].append((hsp.hit_start, hsp.hit_end))
 		is_start = hsp.hit_start < 5
-		is_end = tn_length - hsp.hit_end < 5
+		is_end = hit.seq_len - hsp.hit_end < 5
 
 		if not is_start:
 			seqid = f'{hit.id}___{i}l'
@@ -218,8 +219,8 @@ def get_read_obj(hit, tn_read, tn_length):
 		if not is_end:
 			seqid = f'{hit.id}___{i}r'
 			next_start = hit.seq_len
-			if i+1 < len(hit.hsps):
-				next_start = sorted(hit.hsps, key=lambda x: x.hit_start)[i+1].hit_start
+			if i+1 < len(valid_hits):
+				next_start = sorted(valid_hits, key=lambda x: x.hit_start)[i+1].hit_start
 			right_fp = tn_read.seq[hsp.hit_end:min(next_start, hsp.hit_end+40)]
 			if len(right_fp) > 14:
 				read_result['ends'].append({
