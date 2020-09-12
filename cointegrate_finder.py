@@ -110,7 +110,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 	attach_alignments(all_results, basename, plasmid_file, genome_file)
 	with open(f'outputs/output_{sample}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
-		writer.writerow(['read_id', 'type', 'hsps', 'ends', 'types'])
+		writer.writerow(['read_id', 'type', 'hsps', 'ends', 'types', 'read_length'])
 		for read in all_results:
 			hsps_formatted = ''
 			for pair in read['hsps']:
@@ -121,7 +121,8 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 			ends = [e['id'][-19:] for e in read['ends']]
 			types = [e['type'] for e in read['ends']]
 			read['end_types'] = types
-			writer.writerow([read['id'], read['type'], hsps, ends, types])
+			read_length = len(read['read_seqrec'].seq)
+			writer.writerow([read['id'], read['type'], hsps, ends, types, read_length])
 	with open(f'outputs/{output_name}.csv', 'a', newline='') as outfile:
 		writer = csv.writer(outfile)
 		cointegrates = [r for r in all_results if r['type'] is 'COINTEGRATE']
