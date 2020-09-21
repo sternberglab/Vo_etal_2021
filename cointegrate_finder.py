@@ -83,8 +83,9 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 	tn_length = len(tn)
 
 	tn_start = plasmid.seq.find(tn.seq)
-	plasmid_l = plasmid.seq[tn_start-20:tn_start]
-	plasmid_r = plasmid.seq[tn_start+len(tn.seq):tn_start+len(tn.seq)+20]
+	plasmid_l = plasmid.seq[tn_start-20:tn_start].upper()
+	plasmid_r = plasmid.seq[tn_start+len(tn.seq):tn_start+len(tn.seq)+20].upper()
+	plasmid_ends = [plasmid_l, plasmid_r]
 
 	basename = "tmp/" + sample
 	blast_filename =  f'{basename}_blastresults.xml'
@@ -107,7 +108,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 		read_obj = get_read_obj(hit, tn_read, tn_length)
 		if read_obj:
 			all_results.append(read_obj)
-	attach_alignments(all_results, basename, plasmid_file, genome_file)
+	attach_alignments(all_results, basename, plasmid_file, genome_file, plasmid_ends)
 	with open(f'outputs/output_{sample}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
 		writer.writerow(['read_id', 'type', 'hsps', 'ends', 'types', 'read_length'])
@@ -146,10 +147,43 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficients), len(unknown), sample_desc])
 	print("done")
 
-def attach_alignments(results, basename, plasmid_file, genome_file):
-	all_fp_seqs = [end['seqrec'] for r in results for end in r['ends']]
+def get_short_end_type(end, read, plasmid_ends):
+	end_id = end['id']
+	other_end_id = end['id'][:-1]
+	if end_id[-1] == 'l':
+		other_end_id += 'r'
+	else:
+		other_end_id += 'l'
+	other_end = next((e for e in read['ends'] if e['id'] == other_end_id), None)
+	if not other_end:
+		raise Exception("Can't find the other end for a short end")
+	other_end_seq = other_end['seqrec'].seq.upper()
+	if other_end_id == 'l':
+		end_dupe = other_end_seq[-5:]
+	else:
+		end_dupe = other_end_seq[0:5]
+
+
+	end_seq = end['seqrec'].seq.upper()
+	if end['rv']:
+		end_seq = end_seq.reverse_complement()
+	end_length = len(end_seq)
+	plasmid_l = plasmid_ends[0][-end_length:]
+	plasmid_r = plasmid_ends[1][:end_length]
+
+	if end_seq == plasmid_r or end_seq == plasmid_l:
+		return 'pl'
+	elif end_seq == end_dupe and other_end['type'] == 'gn':
+		return 'gn'
+	else:
+		return 'unknown'
+
+def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends):
+	long_fp_seqs = [end['seqrec'] for r in results for end in r['ends'] if len(end['seqrec']) > 14]
+	short_fp_seqs = [end['seqrec'] for r in results for end in r['ends'] if len(end['seqrec']) <= 14]
+
 	tmp_fp_fasta_name = f'{basename}_fps.fasta'
-	SeqIO.write(all_fp_seqs, tmp_fp_fasta_name, 'fasta')
+	SeqIO.write(long_fp_seqs, tmp_fp_fasta_name, 'fasta')
 	do_bowtie(tmp_fp_fasta_name, plasmid_file, f"{basename}_plasmid.sam")
 	do_bowtie(tmp_fp_fasta_name, genome_file, f"{basename}_genome.sam")
 	with open(f"{basename}_plasmid.sam") as sam:
@@ -161,23 +195,28 @@ def attach_alignments(results, basename, plasmid_file, genome_file):
 
 	for read in results:
 		for end in read['ends']:
-			pl_score = next((p.tags['NM'] for p in plasmid_reads if p.qname == end['id']), 1000)
-			gn_score = next((g.tags['NM'] for g in genome_reads if g.qname == end['id']), 1000)
-			if pl_score < gn_score:
-				end['type'] = 'pl'
-			elif pl_score > gn_score:
-				end['type'] = 'gn'
-			else:
-				for i in range(len(read['hsps'])):
-					gaps = []
-					if i>=1:
-						hit_gap = read['hsps'][i][1] - read['hsps'][i-1][1]
-						gaps.append(hit_gap)
-				if gaps and all([g<3450 and g>3420 for g in gaps]):
+			if len(end['seqrec'].seq) > 14:
+				pl_score = next((p.tags['NM'] for p in plasmid_reads if p.qname == end['id']), 1000)
+				gn_score = next((g.tags['NM'] for g in genome_reads if g.qname == end['id']), 1000)
+				if pl_score < gn_score:
 					end['type'] = 'pl'
+				elif pl_score > gn_score:
+					end['type'] = 'gn'
 				else:
-					end['type'] = 'unknown'
+					for i in range(len(read['hsps'])):
+						gaps = []
+						if i>=1:
+							hit_gap = read['hsps'][i][1] - read['hsps'][i-1][1]
+							gaps.append(hit_gap)
+					if gaps and all([g<3450 and g>3420 for g in gaps]):
+						end['type'] = 'pl'
+					else:
+						end['type'] = 'unknown'
+		for end in read['ends']:
+			if 'type' not in end:
+				end['type'] = get_short_end_type(end, read, plasmid_ends)
 		types = [e['type'] for e in read['ends']]
+		print(types)
 		if len(types) < 2:
 			read['type'] = 'partialRead'
 		elif len(set(types)) == 1 and types[0] == 'pl':
@@ -192,9 +231,8 @@ def attach_alignments(results, basename, plasmid_file, genome_file):
 
 def get_read_obj(hit, tn_read, tn_length):
 	read_result = {'id': hit.id, 'hsps': [], 'ends': [], 'result': None, 'len': hit.seq_len, 'read_seqrec': tn_read}
-
 	prev_end = 0
-	valid_hits = [hsp for hsp in hit.hsps if (hsp.hit_end - hsp.hit_start) > (tn_length - 30)]
+	valid_hits = [hsp for hsp in hit.hsps if (hsp.hit_end - hsp.hit_start) > (tn_length - 1)]
 	valid_hits = sorted(valid_hits, key=lambda x: x.hit_start)
 	# each hsps represents a unique alignment in the read
 	# should be ~equal to the transposon in length, or at start or end of the sequence
@@ -203,18 +241,18 @@ def get_read_obj(hit, tn_read, tn_length):
 		if hsp.evalue > 0.000001:
 			continue
 		read_result['hsps'].append((hsp.hit_start, hsp.hit_end))
-		is_start = hsp.hit_start < 5
-		is_end = hit.seq_len - hsp.hit_end < 5
+		is_start = hsp.hit_start < 4
+		is_end = hit.seq_len - hsp.hit_end < 4
 
 		if not is_start:
 			seqid = f'{hit.id}___{i}l'
 			left_fp = tn_read.seq[max(prev_end, hsp.hit_start-40): hsp.hit_start]
-			if len(left_fp) > 14:
-				read_result['ends'].append({
-					'id': seqid,
-					'eval': hsp.pos_num,
-					'seqrec': SeqRecord(left_fp, id=seqid, description=seqid, name=seqid)
-				})
+			read_result['ends'].append({
+				'id': seqid,
+				'rv': hsp.hit_strand == -1,
+				'eval': hsp.pos_num,
+				'seqrec': SeqRecord(left_fp, id=seqid, description=seqid, name=seqid)
+			})
 
 		if not is_end:
 			seqid = f'{hit.id}___{i}r'
@@ -222,12 +260,12 @@ def get_read_obj(hit, tn_read, tn_length):
 			if i+1 < len(valid_hits):
 				next_start = sorted(valid_hits, key=lambda x: x.hit_start)[i+1].hit_start
 			right_fp = tn_read.seq[hsp.hit_end:min(next_start, hsp.hit_end+40)]
-			if len(right_fp) > 14:
-				read_result['ends'].append({
-					'id': seqid,
-					'eval': hsp.evalue,
-					'seqrec': SeqRecord(right_fp, id=seqid, description=seqid, name=seqid)
-				})
+			read_result['ends'].append({
+				'id': seqid,
+				'eval': hsp.evalue,
+				'rv': hsp.hit_strand == -1,
+				'seqrec': SeqRecord(right_fp, id=seqid, description=seqid, name=seqid)
+			})
 		prev_end = hsp.hit_end
 	if len(read_result["hsps"]):
 		return read_result
