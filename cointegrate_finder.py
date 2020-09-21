@@ -208,9 +208,9 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 			if len(end['seqrec'].seq) > 14:
 				pl_score = next((p.tags['NM'] for p in plasmid_reads if p.qname == end['id']), 1000)
 				gn_score = next((g.tags['NM'] for g in genome_reads if g.qname == end['id']), 1000)
-				if pl_score < gn_score:
+				if pl_score < gn_score and int(pl_score) < 3:
 					end['type'] = 'pl'
-				elif pl_score > gn_score:
+				elif pl_score > gn_score and int(gn_score) < 3:
 					end['type'] = 'gn'
 				else:
 					for i in range(len(read['hsps'])):
