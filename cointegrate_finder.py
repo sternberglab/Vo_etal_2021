@@ -166,7 +166,7 @@ def get_short_end_type(end, read, plasmid_ends):
 	end_seq = end['seqrec'].seq.upper()
 	if end['rv']:
 		end_seq = end_seq.reverse_complement()
-		
+
 	end_length = len(end_seq)
 	dupe_length = min(end_length, 5)
 	if other_end_id == 'l':
@@ -179,7 +179,7 @@ def get_short_end_type(end, read, plasmid_ends):
 	plasmid_l = plasmid_ends[0][-end_length:]
 	plasmid_r = plasmid_ends[1][:end_length]
 
-	if hamming_dist(end_dupe, plasmid_r[:len(end_dupe)]) < 2 or hamming_dst(end_dupe, plasmid_l[-len(end_dupe):]) < 2:
+	if hamming_dist(end_dupe, plasmid_r[:len(end_dupe)]) < 2 or hamming_dist(end_dupe, plasmid_l[-len(end_dupe):]) < 2:
 		return 'unknown'
 	if end_seq == plasmid_r or end_seq == plasmid_l:
 		return 'pl'
