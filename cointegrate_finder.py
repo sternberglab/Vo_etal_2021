@@ -19,6 +19,10 @@ output_name = f'all-{today.year}-{today.month}-{today.day}'
 # curl -O ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.10.1+-x64-linux.tar.gz && tar xzf ncbi-blast-2.10.1+-x64-linux.tar.gz && sudo cp ncbi-blast-2.10.1+/bin/* /usr/local/bin
 run_local = False
 
+def hamming_dist(s1, s2):
+    assert len(s1) == len(s2)
+    return sum(ch1 != ch2 for ch1, ch2 in zip(s1, s2))
+
 def main():
 	os.makedirs(os.path.join(f"./outputs"), exist_ok=True)
 	os.makedirs(os.path.join(f"./bt2index"), exist_ok=True)
@@ -158,19 +162,23 @@ def get_short_end_type(end, read, plasmid_ends):
 	if not other_end:
 		raise Exception("Can't find the other end for a short end")
 	other_end_seq = other_end['seqrec'].seq.upper()
-	if other_end_id == 'l':
-		end_dupe = other_end_seq[-5:]
-	else:
-		end_dupe = other_end_seq[0:5]
 
+	end_length = len(end_seq)
+	dupe_length = min(end_length, 5)
+	if other_end_id == 'l':
+		end_dupe = other_end_seq[-dupe_length:]
+	else:
+		end_dupe = other_end_seq[0:dupe_length]
 
 	end_seq = end['seqrec'].seq.upper()
 	if end['rv']:
 		end_seq = end_seq.reverse_complement()
-	end_length = len(end_seq)
+	
 	plasmid_l = plasmid_ends[0][-end_length:]
 	plasmid_r = plasmid_ends[1][:end_length]
 
+	if hamming_dist(end_dupe, plasmid_r[:len(end_dupe)]) < 2 or hamming_dst(end_dupe, plasmid_l[-len(end_dupe):]) < 2:
+		return 'unknown'
 	if end_seq == plasmid_r or end_seq == plasmid_l:
 		return 'pl'
 	elif end_seq == end_dupe and other_end['type'] == 'gn':
@@ -216,7 +224,6 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 			if 'type' not in end:
 				end['type'] = get_short_end_type(end, read, plasmid_ends)
 		types = [e['type'] for e in read['ends']]
-		print(types)
 		if len(types) < 2:
 			read['type'] = 'partialRead'
 		elif len(set(types)) == 1 and types[0] == 'pl':
