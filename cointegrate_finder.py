@@ -163,6 +163,10 @@ def get_short_end_type(end, read, plasmid_ends):
 		raise Exception("Can't find the other end for a short end")
 	other_end_seq = other_end['seqrec'].seq.upper()
 
+	end_seq = end['seqrec'].seq.upper()
+	if end['rv']:
+		end_seq = end_seq.reverse_complement()
+		
 	end_length = len(end_seq)
 	dupe_length = min(end_length, 5)
 	if other_end_id == 'l':
@@ -170,9 +174,7 @@ def get_short_end_type(end, read, plasmid_ends):
 	else:
 		end_dupe = other_end_seq[0:dupe_length]
 
-	end_seq = end['seqrec'].seq.upper()
-	if end['rv']:
-		end_seq = end_seq.reverse_complement()
+	
 	
 	plasmid_l = plasmid_ends[0][-end_length:]
 	plasmid_r = plasmid_ends[1][:end_length]
