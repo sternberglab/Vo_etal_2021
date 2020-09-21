@@ -241,7 +241,7 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 def get_read_obj(hit, tn_read, tn_length):
 	read_result = {'id': hit.id, 'hsps': [], 'ends': [], 'result': None, 'len': hit.seq_len, 'read_seqrec': tn_read}
 	prev_end = 0
-	valid_hits = [hsp for hsp in hit.hsps if (hsp.hit_end - hsp.hit_start) > (tn_length - 1)]
+	valid_hits = [hsp for hsp in hit.hsps if (hsp.hit_end - hsp.hit_start) > (tn_length - 5)]
 	valid_hits = sorted(valid_hits, key=lambda x: x.hit_start)
 	# each hsps represents a unique alignment in the read
 	# should be ~equal to the transposon in length, or at start or end of the sequence
