@@ -119,7 +119,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 	genome = SeqIO.read(genome_file, 'fasta')
 	tn_length = len(tn)
 
-	target_location = genome.seq.upper().find(target)
+	target_location = genome.seq.upper().find(target) if target else None
 
 	tn_start = plasmid.seq.find(tn.seq)
 	plasmid_l = plasmid.seq[tn_start-20:tn_start].upper()
@@ -188,10 +188,10 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 		if len(unknown):
 			SeqIO.write([r['read_seqrec'] for r in unknown[:10]], f"outputs/{sample}_unknowns.fasta", "fasta")
 		
-		reads_w_location = [r for r in all_results if 'genome_location' in r and r['type'] != 'unknown']
-		ontarget_reads = [r for r in reads_w_location if abs(target_location + 32+ 49 - r['genome_location']) < 100]
-		print(len(reads_w_location), len(ontarget_reads))
-		ontarget_perc = len(ontarget_reads) / len(reads_w_location)
+		if target_location:
+			reads_w_location = [r for r in all_results if 'genome_location' in r and r['type'] != 'unknown']
+			ontarget_reads = [r for r in reads_w_location if abs(target_location + 32+ 49 - r['genome_location']) < 100]
+		ontarget_perc = (len(ontarget_reads) / len(reads_w_location)) if target_location else None
 		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficients), len(unknown), sample_desc, efficiency_results[0], efficiency_results[1], efficiency_results[2], ontarget_perc])
 	print("done")
 
