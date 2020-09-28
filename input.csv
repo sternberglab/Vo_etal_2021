@@ -1,65 +1,65 @@
-﻿Reads File,Tn File,Plasmid File,Genome File,Sample Code,Sample Desc
-PBG-2846.TD01846_SLMS_25_BC01_p3_8M_30hCCS_0806_.CCS2.0000004838.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_25,Vch WT T13 BW Rep 1
-PBG-2846.TD01846_SLMS_26_BC02_p3_8M_30hCCS_0806_.CCS2.0000004837.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_26,Vch WT T13 BW Rep 2
-PBG-2846.TD01846_SLMS_27_BC03_p3_8M_30hCCS_0806_.CCS2.0000004836.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_27,Vch WT T13 BW Rep 3
-PBG-2846.TD01846_SLMS_28_BC04_p3_8M_30hCCS_0806_.CCS2.0000004835.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_28,Vch TnsAmut T13 BW Rep 1
-PBG-2846.TD01846_SLMS_29_BC06_p3_8M_30hCCS_0806_.CCS2.0000004834.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_29,Vch TnsAmut T13 BW Rep 2
-PBG-2846.TD01846_SLMS_30_BC07_p3_8M_30hCCS_0806_.CCS2.0000004833.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_30,Vch TnsAmut T13 BW Rep 3
-PBG-2846.TD01846_SLMS_31_BC08_p3_8M_30hCCS_0806_.CCS2.0000004832.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_31,Vch WT T17 BW Rep 1
-PBG-2846.TD01846_SLMS_32_BC09_p3_8M_30hCCS_0806_.CCS2.0000004831.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_32,Vch TnsAmut T17 BW Rep 1
-PBG-2846.TD01846_SLMS_33_BC10_p3_8M_30hCCS_0806_.CCS2.0000004830.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_33,Vch TnsAmut T17 BW Rep 2
-PBG-2846.TD01846_SLMS_34_BC11_p3_8M_30hCCS_0806_.CCS2.0000004829.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_34,Vch TnsAmut T17 BW Rep 3
-PBG-2846.TD01846_SLMS_35_BC12_p3_8M_30hCCS_0806_.CCS2.0000004828.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_35,Vch WT T13 BW-recA Rep 1
-PBG-2846.TD01846_SLMS_36_BC13_p3_8M_30hCCS_0806_.CCS2.0000004827.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_36,Vch WT T13 BW-recA Rep 2
-PBG-2846.TD01846_SLMS_37_BC15_p3_8M_30hCCS_0806_.CCS2.0000004826.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_37,Vch WT T13 BW-recA Rep 3
-PBG-2846.TD01846_SLMS_38_BC16_p3_8M_30hCCS_0806_.CCS2.0000004825.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_38,Vch TnsAmut T13 BW-recA Rep 1
-PBG-2846.TD01846_SLMS_39_BC17_p3_8M_30hCCS_0806_.CCS2.0000004824.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_39,Vch TnsAmut T13 BW-recA Rep 2
-PBG-2846.TD01846_SLMS_40_BC18_p3_8M_30hCCS_0806_.CCS2.0000004823.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_40,Vch TnsAmut T13 BW-recA Rep 3
-PBG-2846.TD01846_SLMS_41_BC19_p3_8M_30hCCS_0806_.CCS2.0000004822.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_41,Vch WT T17 BW-recA Rep 1
-PBG-2846.TD01846_SLMS_42_BC20_p3_8M_30hCCS_0806_.CCS2.0000004821.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_42,Vch TnsAmut T17 BW-recA Rep 1
-PBG-2846.TD01846_SLMS_43_BC21_p3_8M_30hCCS_0806_.CCS2.0000004820.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_43,Vch TnsAmut T17 BW-recA Rep 2
-PBG-2846.TD01846_SLMS_44_BC22_p3_8M_30hCCS_0806_.CCS2.0000004819.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_44,Vch TnsAmut T17 BW-recA Rep 3
-PBG-2847.TD01846_SLMS_45_BC23_p4_8M_30hCCS_0806_.CCS2.0000004905.fasta.gz,eco_wt_tn.fasta,eco_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_45,Eco WT BW Rep 1
-PBG-2847.TD01846_SLMS_46_BC24_p4_8M_30hCCS_0806_.CCS2.0000004904.fasta.gz,eco_wt_tn.fasta,eco_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_46,Eco TnsAmut BW Rep 1
-PBG-2847.TD01846_SLMS_47_BC26_p4_8M_30hCCS_0806_.CCS2.0000004903.fasta.gz,eco_wt_tn.fasta,eco_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_47,Eco TnsAmut BW Rep 2
-PBG-2847.TD01846_SLMS_48_BC27_p4_8M_30hCCS_0806_.CCS2.0000004902.fasta.gz,eco_wt_tn.fasta,eco_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_48,Eco TnsAmut BW Rep 3
-PBG-2847.TD01846_SLMS_49_BC28_p4_8M_30hCCS_0806_.CCS2.0000004901.fasta.gz,shoint_wt_tn.fasta,shoint_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_49,ShoINT T252 BW Rep 1
-PBG-2847.TD01846_SLMS_50_BC29_p4_8M_30hCCS_0806_.CCS2.0000004900.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_50,ShCAST T252 BW Rep 1
-PBG-2847.TD01846_SLMS_51_BC30_p4_8M_30hCCS_0806_.CCS2.0000004899.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_51,ShCAST T252 BW Rep 2
-PBG-2847.TD01846_SLMS_52_BC31_p4_8M_30hCCS_0806_.CCS2.0000004898.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_52,ShCAST T252 BW Rep 3
-PBG-2847.TD01846_SLMS_53_BC32_p4_8M_30hCCS_0806_.CCS2.0000004897.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_53,ShCAST T261 BW Rep 1
-PBG-2847.TD01846_SLMS_54_BC33_p4_8M_30hCCS_0806_.CCS2.0000004896.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_54,ShCAST T261 BW Rep 2
-PBG-2847.TD01846_SLMS_55_BC34_p4_8M_30hCCS_0806_.CCS2.0000004895.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_55,ShCAST T261 BW Rep 3
-PBG-2847.TD01846_SLMS_56_BC35_p4_8M_30hCCS_0806_.CCS2.0000004894.fasta.gz,eco_wt_tn.fasta,eco_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_56,Eco WT BW-recA Rep 1
-PBG-2847.TD01846_SLMS_57_BC36_p4_8M_30hCCS_0806_.CCS2.0000004893.fasta.gz,eco_wt_tn.fasta,eco_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_57,Eco TnsAmut BW-recA Rep 1
-PBG-2847.TD01846_SLMS_58_BC37_p4_8M_30hCCS_0806_.CCS2.0000004892.fasta.gz,eco_wt_tn.fasta,eco_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_58,Eco TnsAmut BW-recA Rep 2
-PBG-2847.TD01846_SLMS_59_BC39_p4_8M_30hCCS_0806_.CCS2.0000004891.fasta.gz,eco_wt_tn.fasta,eco_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_59,Eco TnsAmut BW-recA Rep 3
-PBG-2847.TD01846_SLMS_60_BC40_p4_8M_30hCCS_0806_.CCS2.0000004890.fasta.gz,shoint_wt_tn.fasta,shoint_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_60,ShoINT T252 BW-recA Rep 1
-PBG-2847.TD01846_SLMS_61_BC43_p4_8M_30hCCS_0806_.CCS2.0000004889.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_61,ShCAST T252 BW-recA Rep 1
-PBG-2847.TD01846_SLMS_62_BC44_p4_8M_30hCCS_0806_.CCS2.0000004888.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_62,ShCAST T252 BW-recA Rep 2
-PBG-2847.TD01846_SLMS_63_BC45_p4_8M_30hCCS_0806_.CCS2.0000004887.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_63,ShCAST T252 BW-recA Rep 3
-PBG-2847.TD01846_SLMS_64_BC46_p4_8M_30hCCS_0806_.CCS2.0000004886.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_64,ShCAST T261 BW-recA Rep 1
-PBG-2847.TD01846_SLMS_65_BC47_p4_8M_30hCCS_0806_.CCS2.0000004885.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_65,ShCAST T261 BW-recA Rep 2
-PBG-2847.TD01846_SLMS_66_BC48_p4_8M_30hCCS_0806_.CCS2.0000004884.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_66,ShCAST T261 BW-recA Rep 3
-PBG-2859.TD01913_SLMS_67_BC49_p5_8M_30hCCS_0817_.CCS2.0000005011.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_67,Vch A-Bfus T13 BW
-PBG-2859.TD01913_SLMS_68_BC50_p5_8M_30hCCS_0817_.CCS2.0000005010.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_68,Vch A-Bfus T17 BW
-PBG-2859.TD01913_SLMS_69_BC52_p5_8M_30hCCS_0817_.CCS2.0000005009.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_69,Vch A-Bfus TnsAmut T13 BW
-PBG-2859.TD01913_SLMS_70_BC53_p5_8M_30hCCS_0817_.CCS2.0000005008.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_70,Vch A-Bfus TnsAmut T17 BW
-PBG-2859.TD01913_SLMS_71_BC54_p5_8M_30hCCS_0817_.CCS2.0000005007.fasta.gz,awo_wt_tn.fasta,awo_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_71,Awo T13 BW
-PBG-2859.TD01913_SLMS_72_BC55_p5_8M_30hCCS_0817_.CCS2.0000005006.fasta.gz,awo_wt_tn.fasta,awo_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_72,Awo T17 BW
-PBG-2859.TD01913_SLMS_73_BC56_p5_8M_30hCCS_0817_.CCS2.0000005005.fasta.gz,awo_wt_tn.fasta,awo_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_73,Awo TnsAmut T13 BW
-PBG-2859.TD01913_SLMS_74_BC57_p5_8M_30hCCS_0817_.CCS2.0000005004.fasta.gz,awo_wt_tn.fasta,awo_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_74,Awo TnsAmut T17 BW
-PBG-2859.TD01913_SLMS_75_BC58_p5_8M_30hCCS_0817_.CCS2.0000005003.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_75,Vch A-Bfus T13 recA
-PBG-2859.TD01913_SLMS_76_BC59_p5_8M_30hCCS_0817_.CCS2.0000005002.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_76,Vch A-Bfus T17 recA
-PBG-2859.TD01913_SLMS_77_BC60_p5_8M_30hCCS_0817_.CCS2.0000005001.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_77,Vch A-Bfus TnsAmut T13 recA
-PBG-2859.TD01913_SLMS_78_BC61_p5_8M_30hCCS_0817_.CCS2.0000005000.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_78,Vch A-Bfus TnsAmut T17 recA
-PBG-2859.TD01913_SLMS_79_BC62_p5_8M_30hCCS_0817_.CCS2.0000004999.fasta.gz,awo_wt_tn.fasta,awo_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_79,Awo T13 recA
-PBG-2859.TD01913_SLMS_80_BC63_p5_8M_30hCCS_0817_.CCS2.0000004998.fasta.gz,awo_wt_tn.fasta,awo_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_80,Awo T17 recA
-PBG-2859.TD01913_SLMS_81_BC64_p5_8M_30hCCS_0817_.CCS2.0000004997.fasta.gz,awo_wt_tn.fasta,awo_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_81,Awo TnsAmut T13 recA
-PBG-2859.TD01913_SLMS_82_BC65_p5_8M_30hCCS_0817_.CCS2.0000004996.fasta.gz,awo_wt_tn.fasta,awo_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_82,Awo TnsAmut T17 recA
-PBG-2859.TD01913_SLMS_83_BC66_p5_8M_30hCCS_0817_.CCS2.0000004995.fasta.gz,shcast_loxp_tn.fasta,shcast_loxp_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_83,ShCAST Cre recA 0mM ara
-PBG-2859.TD01913_SLMS_84_BC67_p5_8M_30hCCS_0817_.CCS2.0000004994.fasta.gz,shcast_loxp_tn.fasta,shcast_loxp_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_84,ShCAST Cre recA 0.0066mM ara
-PBG-2859.TD01913_SLMS_85_BC68_p5_8M_30hCCS_0817_.CCS2.0000004993.fasta.gz,shcast_loxp_tn.fasta,shcast_loxp_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_85,ShCAST Cre recA 0.022mM ara
-PBG-2859.TD01913_SLMS_86_BC69_p5_8M_30hCCS_0817_.CCS2.0000004992.fasta.gz,shcast_loxp_tn.fasta,shcast_loxp_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_86,ShCAST Cre recA 0.066mM ara
-PBG-2859.TD01913_SLMS_87_BC70_p5_8M_30hCCS_0817_.CCS2.0000004991.fasta.gz,shcast_tnir_tn.fasta,shcast_tnir_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_87,ShCAST TniR recA 0mM ara
-PBG-2859.TD01913_SLMS_88_BC71_p5_8M_30hCCS_0817_.CCS2.0000004990.fasta.gz,shcast_tnir_tn.fasta,shcast_tnir_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_88,ShCAST TniR recA 0.022mM ara
+﻿Reads File,Tn File,Plasmid File,Genome File,Sample Code,Sample Desc,Target Sequence
+PBG-2846.TD01846_SLMS_25_BC01_p3_8M_30hCCS_0806_.CCS2.0000004838.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_25,Vch WT T13 BW Rep 1,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2846.TD01846_SLMS_26_BC02_p3_8M_30hCCS_0806_.CCS2.0000004837.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_26,Vch WT T13 BW Rep 2,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2846.TD01846_SLMS_27_BC03_p3_8M_30hCCS_0806_.CCS2.0000004836.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_27,Vch WT T13 BW Rep 3,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2846.TD01846_SLMS_28_BC04_p3_8M_30hCCS_0806_.CCS2.0000004835.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_28,Vch TnsAmut T13 BW Rep 1,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2846.TD01846_SLMS_29_BC06_p3_8M_30hCCS_0806_.CCS2.0000004834.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_29,Vch TnsAmut T13 BW Rep 2,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2846.TD01846_SLMS_30_BC07_p3_8M_30hCCS_0806_.CCS2.0000004833.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_30,Vch TnsAmut T13 BW Rep 3,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2846.TD01846_SLMS_31_BC08_p3_8M_30hCCS_0806_.CCS2.0000004832.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_31,Vch WT T17 BW Rep 1,TCTTGCTGAGATTGATAAGGTAATTAACCTTA
+PBG-2846.TD01846_SLMS_32_BC09_p3_8M_30hCCS_0806_.CCS2.0000004831.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_32,Vch TnsAmut T17 BW Rep 1,TCTTGCTGAGATTGATAAGGTAATTAACCTTA
+PBG-2846.TD01846_SLMS_33_BC10_p3_8M_30hCCS_0806_.CCS2.0000004830.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_33,Vch TnsAmut T17 BW Rep 2,TCTTGCTGAGATTGATAAGGTAATTAACCTTA
+PBG-2846.TD01846_SLMS_34_BC11_p3_8M_30hCCS_0806_.CCS2.0000004829.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_34,Vch TnsAmut T17 BW Rep 3,TCTTGCTGAGATTGATAAGGTAATTAACCTTA
+PBG-2846.TD01846_SLMS_35_BC12_p3_8M_30hCCS_0806_.CCS2.0000004828.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_35,Vch WT T13 BW-recA Rep 1,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2846.TD01846_SLMS_36_BC13_p3_8M_30hCCS_0806_.CCS2.0000004827.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_36,Vch WT T13 BW-recA Rep 2,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2846.TD01846_SLMS_37_BC15_p3_8M_30hCCS_0806_.CCS2.0000004826.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_37,Vch WT T13 BW-recA Rep 3,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2846.TD01846_SLMS_38_BC16_p3_8M_30hCCS_0806_.CCS2.0000004825.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_38,Vch TnsAmut T13 BW-recA Rep 1,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2846.TD01846_SLMS_39_BC17_p3_8M_30hCCS_0806_.CCS2.0000004824.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_39,Vch TnsAmut T13 BW-recA Rep 2,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2846.TD01846_SLMS_40_BC18_p3_8M_30hCCS_0806_.CCS2.0000004823.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_40,Vch TnsAmut T13 BW-recA Rep 3,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2846.TD01846_SLMS_41_BC19_p3_8M_30hCCS_0806_.CCS2.0000004822.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_41,Vch WT T17 BW-recA Rep 1,TCTTGCTGAGATTGATAAGGTAATTAACCTTA
+PBG-2846.TD01846_SLMS_42_BC20_p3_8M_30hCCS_0806_.CCS2.0000004821.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_42,Vch TnsAmut T17 BW-recA Rep 1,TCTTGCTGAGATTGATAAGGTAATTAACCTTA
+PBG-2846.TD01846_SLMS_43_BC21_p3_8M_30hCCS_0806_.CCS2.0000004820.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_43,Vch TnsAmut T17 BW-recA Rep 2,TCTTGCTGAGATTGATAAGGTAATTAACCTTA
+PBG-2846.TD01846_SLMS_44_BC22_p3_8M_30hCCS_0806_.CCS2.0000004819.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_44,Vch TnsAmut T17 BW-recA Rep 3,TCTTGCTGAGATTGATAAGGTAATTAACCTTA
+PBG-2847.TD01846_SLMS_45_BC23_p4_8M_30hCCS_0806_.CCS2.0000004905.fasta.gz,eco_wt_tn.fasta,eco_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_45,Eco WT BW Rep 1,
+PBG-2847.TD01846_SLMS_46_BC24_p4_8M_30hCCS_0806_.CCS2.0000004904.fasta.gz,eco_wt_tn.fasta,eco_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_46,Eco TnsAmut BW Rep 1,
+PBG-2847.TD01846_SLMS_47_BC26_p4_8M_30hCCS_0806_.CCS2.0000004903.fasta.gz,eco_wt_tn.fasta,eco_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_47,Eco TnsAmut BW Rep 2,
+PBG-2847.TD01846_SLMS_48_BC27_p4_8M_30hCCS_0806_.CCS2.0000004902.fasta.gz,eco_wt_tn.fasta,eco_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_48,Eco TnsAmut BW Rep 3,
+PBG-2847.TD01846_SLMS_49_BC28_p4_8M_30hCCS_0806_.CCS2.0000004901.fasta.gz,shoint_wt_tn.fasta,shoint_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_49,ShoINT T252 BW Rep 1,acggggaatctgctccggcggat
+PBG-2847.TD01846_SLMS_50_BC29_p4_8M_30hCCS_0806_.CCS2.0000004900.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_50,ShCAST T252 BW Rep 1,acggggaatctgctccggcggat
+PBG-2847.TD01846_SLMS_51_BC30_p4_8M_30hCCS_0806_.CCS2.0000004899.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_51,ShCAST T252 BW Rep 2,acggggaatctgctccggcggat
+PBG-2847.TD01846_SLMS_52_BC31_p4_8M_30hCCS_0806_.CCS2.0000004898.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_52,ShCAST T252 BW Rep 3,acggggaatctgctccggcggat
+PBG-2847.TD01846_SLMS_53_BC32_p4_8M_30hCCS_0806_.CCS2.0000004897.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_53,ShCAST T261 BW Rep 1,ATAGCGATCCCTTGCTGAAAATA
+PBG-2847.TD01846_SLMS_54_BC33_p4_8M_30hCCS_0806_.CCS2.0000004896.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_54,ShCAST T261 BW Rep 2,ATAGCGATCCCTTGCTGAAAATA
+PBG-2847.TD01846_SLMS_55_BC34_p4_8M_30hCCS_0806_.CCS2.0000004895.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_55,ShCAST T261 BW Rep 3,ATAGCGATCCCTTGCTGAAAATA
+PBG-2847.TD01846_SLMS_56_BC35_p4_8M_30hCCS_0806_.CCS2.0000004894.fasta.gz,eco_wt_tn.fasta,eco_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_56,Eco WT BW-recA Rep 1,
+PBG-2847.TD01846_SLMS_57_BC36_p4_8M_30hCCS_0806_.CCS2.0000004893.fasta.gz,eco_wt_tn.fasta,eco_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_57,Eco TnsAmut BW-recA Rep 1,
+PBG-2847.TD01846_SLMS_58_BC37_p4_8M_30hCCS_0806_.CCS2.0000004892.fasta.gz,eco_wt_tn.fasta,eco_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_58,Eco TnsAmut BW-recA Rep 2,
+PBG-2847.TD01846_SLMS_59_BC39_p4_8M_30hCCS_0806_.CCS2.0000004891.fasta.gz,eco_wt_tn.fasta,eco_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_59,Eco TnsAmut BW-recA Rep 3,
+PBG-2847.TD01846_SLMS_60_BC40_p4_8M_30hCCS_0806_.CCS2.0000004890.fasta.gz,shoint_wt_tn.fasta,shoint_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_60,ShoINT T252 BW-recA Rep 1,acggggaatctgctccggcggat
+PBG-2847.TD01846_SLMS_61_BC43_p4_8M_30hCCS_0806_.CCS2.0000004889.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_61,ShCAST T252 BW-recA Rep 1,acggggaatctgctccggcggat
+PBG-2847.TD01846_SLMS_62_BC44_p4_8M_30hCCS_0806_.CCS2.0000004888.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_62,ShCAST T252 BW-recA Rep 2,acggggaatctgctccggcggat
+PBG-2847.TD01846_SLMS_63_BC45_p4_8M_30hCCS_0806_.CCS2.0000004887.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_63,ShCAST T252 BW-recA Rep 3,acggggaatctgctccggcggat
+PBG-2847.TD01846_SLMS_64_BC46_p4_8M_30hCCS_0806_.CCS2.0000004886.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_64,ShCAST T261 BW-recA Rep 1,ATAGCGATCCCTTGCTGAAAATA
+PBG-2847.TD01846_SLMS_65_BC47_p4_8M_30hCCS_0806_.CCS2.0000004885.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_65,ShCAST T261 BW-recA Rep 2,ATAGCGATCCCTTGCTGAAAATA
+PBG-2847.TD01846_SLMS_66_BC48_p4_8M_30hCCS_0806_.CCS2.0000004884.fasta.gz,shcast_wt_tn.fasta,shcast_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_66,ShCAST T261 BW-recA Rep 3,ATAGCGATCCCTTGCTGAAAATA
+PBG-2859.TD01913_SLMS_67_BC49_p5_8M_30hCCS_0817_.CCS2.0000005011.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_67,Vch A-Bfus T13 BW,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2859.TD01913_SLMS_68_BC50_p5_8M_30hCCS_0817_.CCS2.0000005010.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_68,Vch A-Bfus T17 BW,TCTTGCTGAGATTGATAAGGTAATTAACCTTA
+PBG-2859.TD01913_SLMS_69_BC52_p5_8M_30hCCS_0817_.CCS2.0000005009.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_69,Vch A-Bfus TnsAmut T13 BW,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2859.TD01913_SLMS_70_BC53_p5_8M_30hCCS_0817_.CCS2.0000005008.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_70,Vch A-Bfus TnsAmut T17 BW,TCTTGCTGAGATTGATAAGGTAATTAACCTTA
+PBG-2859.TD01913_SLMS_71_BC54_p5_8M_30hCCS_0817_.CCS2.0000005007.fasta.gz,awo_wt_tn.fasta,awo_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_71,Awo T13 BW,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2859.TD01913_SLMS_72_BC55_p5_8M_30hCCS_0817_.CCS2.0000005006.fasta.gz,awo_wt_tn.fasta,awo_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_72,Awo T17 BW,TCTTGCTGAGATTGATAAGGTAATTAACCTTA
+PBG-2859.TD01913_SLMS_73_BC56_p5_8M_30hCCS_0817_.CCS2.0000005005.fasta.gz,awo_wt_tn.fasta,awo_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_73,Awo TnsAmut T13 BW,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2859.TD01913_SLMS_74_BC57_p5_8M_30hCCS_0817_.CCS2.0000005004.fasta.gz,awo_wt_tn.fasta,awo_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_74,Awo TnsAmut T17 BW,TCTTGCTGAGATTGATAAGGTAATTAACCTTA
+PBG-2859.TD01913_SLMS_75_BC58_p5_8M_30hCCS_0817_.CCS2.0000005003.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_75,Vch A-Bfus T13 recA,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2859.TD01913_SLMS_76_BC59_p5_8M_30hCCS_0817_.CCS2.0000005002.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_76,Vch A-Bfus T17 recA,TCTTGCTGAGATTGATAAGGTAATTAACCTTA
+PBG-2859.TD01913_SLMS_77_BC60_p5_8M_30hCCS_0817_.CCS2.0000005001.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_77,Vch A-Bfus TnsAmut T13 recA,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2859.TD01913_SLMS_78_BC61_p5_8M_30hCCS_0817_.CCS2.0000005000.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_78,Vch A-Bfus TnsAmut T17 recA,TCTTGCTGAGATTGATAAGGTAATTAACCTTA
+PBG-2859.TD01913_SLMS_79_BC62_p5_8M_30hCCS_0817_.CCS2.0000004999.fasta.gz,awo_wt_tn.fasta,awo_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_79,Awo T13 recA,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2859.TD01913_SLMS_80_BC63_p5_8M_30hCCS_0817_.CCS2.0000004998.fasta.gz,awo_wt_tn.fasta,awo_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_80,Awo T17 recA,TCTTGCTGAGATTGATAAGGTAATTAACCTTA
+PBG-2859.TD01913_SLMS_81_BC64_p5_8M_30hCCS_0817_.CCS2.0000004997.fasta.gz,awo_wt_tn.fasta,awo_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_81,Awo TnsAmut T13 recA,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-2859.TD01913_SLMS_82_BC65_p5_8M_30hCCS_0817_.CCS2.0000004996.fasta.gz,awo_wt_tn.fasta,awo_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_82,Awo TnsAmut T17 recA,TCTTGCTGAGATTGATAAGGTAATTAACCTTA
+PBG-2859.TD01913_SLMS_83_BC66_p5_8M_30hCCS_0817_.CCS2.0000004995.fasta.gz,shcast_loxp_tn.fasta,shcast_loxp_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_83,ShCAST Cre recA 0mM ara,acggggaatctgctccggcggat
+PBG-2859.TD01913_SLMS_84_BC67_p5_8M_30hCCS_0817_.CCS2.0000004994.fasta.gz,shcast_loxp_tn.fasta,shcast_loxp_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_84,ShCAST Cre recA 0.0066mM ara,acggggaatctgctccggcggat
+PBG-2859.TD01913_SLMS_85_BC68_p5_8M_30hCCS_0817_.CCS2.0000004993.fasta.gz,shcast_loxp_tn.fasta,shcast_loxp_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_85,ShCAST Cre recA 0.022mM ara,acggggaatctgctccggcggat
+PBG-2859.TD01913_SLMS_86_BC69_p5_8M_30hCCS_0817_.CCS2.0000004992.fasta.gz,shcast_loxp_tn.fasta,shcast_loxp_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_86,ShCAST Cre recA 0.066mM ara,acggggaatctgctccggcggat
+PBG-2859.TD01913_SLMS_87_BC70_p5_8M_30hCCS_0817_.CCS2.0000004991.fasta.gz,shcast_tnir_tn.fasta,shcast_tnir_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_87,ShCAST TniR recA 0mM ara,acggggaatctgctccggcggat
+PBG-2859.TD01913_SLMS_88_BC71_p5_8M_30hCCS_0817_.CCS2.0000004990.fasta.gz,shcast_tnir_tn.fasta,shcast_tnir_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_88,ShCAST TniR recA 0.022mM ara,acggggaatctgctccggcggat

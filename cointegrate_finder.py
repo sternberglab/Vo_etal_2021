@@ -1,5 +1,6 @@
 from Bio import SeqIO, SearchIO
 from Bio.SeqRecord import SeqRecord
+from Bio.Seq import Seq
 from Bio.Blast.Applications import NcbiblastnCommandline
 import gzip
 from datetime import date
@@ -30,7 +31,7 @@ def main():
 	today = date.today()
 	with open(f'outputs/{output_name}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
-		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown', 'Sample Description'])
+		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown', 'Sample Description', 'Uninterrupted insertion site reads', 'Normal site reads', 'Approx. Efficiency %', 'On-target %'])
 	
 	with open('input.csv', 'r', encoding='utf-8-sig') as infile:
 		reader = csv.DictReader(infile)
@@ -41,9 +42,10 @@ def main():
 			genome_file = row['Genome File']
 			sample = row['Sample Code']
 			sample_desc = row['Sample Desc']
+			target = row['Target Sequence'].upper() if len(row['Target Sequence']) else None
 			print(f"Processing {sample}...")
 			print("-----")
-			process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sample_desc)
+			process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sample_desc, target)
 			print("-----")
 
 	if not run_local:
@@ -54,6 +56,9 @@ def main():
 	print("done")
 
 def download_s3(filename, isNotSample=True):
+	if Path(filename).exists() and run_local:
+		return filename
+
 	isGzip = False
 	if isNotSample:
 		local_path = filename
@@ -75,7 +80,35 @@ def download_s3(filename, isNotSample=True):
 		local_path = local_path[:-3]
 	return local_path
 
-def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sample_desc):
+def get_efficiency(reads_file, genome, target):
+	# bowtie for the uninterrupted insertion site to get approximate integration efficiency
+	uninterrupted_reads, other_site_reads, efficiency = None, None, None
+	if target:
+		site = genome.seq.upper().find(target)
+		if not site or site < 0:
+			raise Exception("Problem here")
+		# add length of target, and the span of +35 to +65
+		uninterrupted_insertion_site = genome.seq[site+len(target)+35:site+len(target)+65]
+		uninterrupted_fasta = f'tmp/uninterrupted.fasta'
+		SeqIO.write(SeqRecord(uninterrupted_insertion_site, id="target"), uninterrupted_fasta, 'fasta')
+		blast_filename =  f'tmp/uninterrupted_blastresults.xml'
+		do_blast(uninterrupted_fasta, reads_file, blast_filename)
+		# We are querying the 30bp sequence around the insertion site for WT sequence
+		res = SearchIO.read(blast_filename, 'blast-xml')
+		hits = [hit for hit in res.hits if len(hit.hsps) == 1 and hit.hsps[0].ident_num > 28]
+		uninterrupted_reads = len(hits)
+
+		SeqIO.write(SeqRecord(genome.seq[site-50:site-20], id='site'), 'tmp/other_site.fasta', 'fasta')
+		do_blast('tmp/other_site.fasta', reads_file, 'tmp/other_site_blast.xml')
+		res = SearchIO.read('tmp/other_site_blast.xml', 'blast-xml')
+		hits = [hit for hit in res.hits if len(hit.hsps) == 1 and hit.hsps[0].ident_num > 28]
+		other_site_reads = len(hits)
+
+		efficiency = (other_site_reads - uninterrupted_reads) / other_site_reads
+
+	return (uninterrupted_reads, other_site_reads, efficiency)
+
+def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sample_desc, target):
 	reads_file = download_s3(reads_file, False)
 	# reads_file = 'sample.fasta'
 	tn_file = download_s3(tn_file)
@@ -85,6 +118,8 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 	tn = SeqIO.read(tn_file, 'fasta')
 	genome = SeqIO.read(genome_file, 'fasta')
 	tn_length = len(tn)
+
+	target_location = genome.seq.upper().find(target)
 
 	tn_start = plasmid.seq.find(tn.seq)
 	plasmid_l = plasmid.seq[tn_start-20:tn_start].upper()
@@ -102,8 +137,10 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 	# filter the reads to just those with the transposon, write to file in case we want them later
 	all_reads = SeqIO.parse(reads_file, 'fasta')
 	tn_reads = [r for r in all_reads if r.id in tn_read_ids]
-	SeqIO.write(tn_reads, f'{basename}_tnreads.fasta', 'fasta')
-	tn_reads = list([r for r in SeqIO.parse(f'{basename}_tnreads.fasta', 'fasta')])
+	#SeqIO.write(tn_reads, f'{basename}_tnreads.fasta', 'fasta')
+	#tn_reads = list([r for r in SeqIO.parse(f'{basename}_tnreads.fasta', 'fasta')])
+
+	efficiency_results = get_efficiency(reads_file, genome, target)
 
 	all_results = []
 	# each hit represents one or more matches of the query against a read sequence
@@ -112,10 +149,11 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 		read_obj = get_read_obj(hit, tn_read, tn_length)
 		if read_obj:
 			all_results.append(read_obj)
-	attach_alignments(all_results, basename, plasmid_file, genome_file, plasmid_ends)
+
+	attach_alignments(all_results, basename, plasmid_file, genome_file, plasmid_ends, target_location)
 	with open(f'outputs/output_{sample}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
-		writer.writerow(['read_id', 'type', 'hsps', 'ends', 'types', 'read_length'])
+		writer.writerow(['read_id', 'type', 'hsps', 'ends', 'types', 'read_length', 'genome_location'])
 		for read in all_results:
 			hsps_formatted = ''
 			for pair in read['hsps']:
@@ -126,7 +164,8 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 			ends = [e['id'][-19:] for e in read['ends']]
 			types = [e['type'] for e in read['ends']]
 			read['end_types'] = types
-			writer.writerow([read['id'], read['type'], hsps, ends, types, read['len']])
+			location = read['genome_location'] if 'genome_location' in read else None
+			writer.writerow([read['id'], read['type'], hsps, ends, types, read['len'], location])
 	with open(f'outputs/{output_name}.csv', 'a', newline='') as outfile:
 		writer = csv.writer(outfile)
 		cointegrates = [r for r in all_results if r['type'] is 'COINTEGRATE']
@@ -148,7 +187,12 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 		unknown = [r for r in all_results if r['type'] is 'unknown']
 		if len(unknown):
 			SeqIO.write([r['read_seqrec'] for r in unknown[:10]], f"outputs/{sample}_unknowns.fasta", "fasta")
-		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficients), len(unknown), sample_desc])
+		
+		reads_w_location = [r for r in all_results if 'genome_location' in r and r['type'] != 'unknown']
+		ontarget_reads = [r for r in reads_w_location if abs(target_location + 32+ 49 - r['genome_location']) < 100]
+		print(len(reads_w_location), len(ontarget_reads))
+		ontarget_perc = len(ontarget_reads) / len(reads_w_location)
+		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficients), len(unknown), sample_desc, efficiency_results[0], efficiency_results[1], efficiency_results[2], ontarget_perc])
 	print("done")
 
 def get_short_end_type(end, read, plasmid_ends):
@@ -173,8 +217,6 @@ def get_short_end_type(end, read, plasmid_ends):
 		end_dupe = other_end_seq[-dupe_length:]
 	else:
 		end_dupe = other_end_seq[0:dupe_length]
-
-	
 	
 	plasmid_l = plasmid_ends[0][-end_length:]
 	plasmid_r = plasmid_ends[1][:end_length]
@@ -188,9 +230,11 @@ def get_short_end_type(end, read, plasmid_ends):
 	else:
 		return 'unknown'
 
-def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends):
+def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends, target_location):
 	long_fp_seqs = [end['seqrec'] for r in results for end in r['ends'] if len(end['seqrec']) > 14]
 	short_fp_seqs = [end['seqrec'] for r in results for end in r['ends'] if len(end['seqrec']) <= 14]
+	
+	genome = SeqIO.read(genome_file, 'fasta')
 
 	tmp_fp_fasta_name = f'{basename}_fps.fasta'
 	SeqIO.write(long_fp_seqs, tmp_fp_fasta_name, 'fasta')
@@ -207,11 +251,26 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 		for end in read['ends']:
 			if len(end['seqrec'].seq) > 14:
 				pl_score = next((p.tags['NM'] for p in plasmid_reads if p.qname == end['id']), 1000)
-				gn_score = next((g.tags['NM'] for g in genome_reads if g.qname == end['id']), 1000)
+				gn_reads = [g for g in genome_reads if g.qname == end['id']]
+				
+				min_nm = min([g.tags['NM'] for g in gn_reads]) if len(gn_reads) else 1000
+				gn_read = [g for g in gn_reads if g.tags['NM'] == min_nm][0] if gn_reads else None
+				gn_score = min_nm
 				if pl_score < gn_score and int(pl_score) < 3:
 					end['type'] = 'pl'
 				elif pl_score > gn_score and int(gn_score) < 3:
 					end['type'] = 'gn'
+					# get the location of the read based on if it's to the left or right of the transposon, and the orientation of the read
+					# the blast result flips the read, not the tn, so left is always BEFORE the raw tn sequence, not necessarily lower ref in the genome
+					# so if it was a reverse read, we actually want the 'right' end (which is lower ref in the genome)
+					is_left = end['id'][-1] is 'l'
+					if (is_left and not gn_read.reverse) or (gn_read.reverse and not is_left):
+						# no -1 because the +1 location site and bowtie 1-indexing cancel
+						location = gn_read.coords[-1]
+					else:
+						# -1 because this read already starts AFTER the transposon and bowtie is 1-indexed
+						location = gn_read.coords[0] - 1 + 5
+					end['genome_location'] = location
 				else:
 					for i in range(len(read['hsps'])):
 						gaps = []
@@ -226,6 +285,16 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 			if 'type' not in end:
 				end['type'] = get_short_end_type(end, read, plasmid_ends)
 		types = [e['type'] for e in read['ends']]
+
+		locations = [e for e in read['ends'] if 'genome_location' in e]
+		if len(locations) > 1:
+			if len(locations[1]['seqrec'].seq) < 25 or (len(locations[1]['seqrec'].seq) > 25 and not locations[0]['rv']):
+				read['genome_location'] = locations[0]['genome_location']
+			else:
+				read['genome_location'] = locations[1]['genome_location']
+		if len(locations) == 1:
+			read['genome_location'] = locations[0]['genome_location']
+
 		if len(types) < 2:
 			read['type'] = 'partialRead'
 		elif len(set(types)) == 1 and types[0] == 'pl':
@@ -239,7 +308,7 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 	return results
 
 def get_read_obj(hit, tn_read, tn_length):
-	read_result = {'id': hit.id, 'hsps': [], 'ends': [], 'result': None, 'len': hit.seq_len, 'read_seqrec': tn_read}
+	read_result = {'id': hit.id, 'hit': hit, 'hsps': [], 'ends': [], 'result': None, 'len': hit.seq_len, 'read_seqrec': tn_read}
 	prev_end = 0
 	valid_hits = [hsp for hsp in hit.hsps if (hsp.hit_end - hsp.hit_start) > (tn_length - 5)]
 	valid_hits = sorted(valid_hits, key=lambda x: x.hit_start)
@@ -259,15 +328,17 @@ def get_read_obj(hit, tn_read, tn_length):
 			read_result['ends'].append({
 				'id': seqid,
 				'rv': hsp.hit_strand == -1,
-				'eval': hsp.pos_num,
+				'eval': hsp.evalue,
 				'seqrec': SeqRecord(left_fp, id=seqid, description=seqid, name=seqid)
 			})
+
 
 		if not is_end:
 			seqid = f'{hit.id}___{i}r'
 			next_start = hit.seq_len
 			if i+1 < len(valid_hits):
 				next_start = sorted(valid_hits, key=lambda x: x.hit_start)[i+1].hit_start
+			
 			right_fp = tn_read.seq[hsp.hit_end:min(next_start, hsp.hit_end+40)]
 			read_result['ends'].append({
 				'id': seqid,
