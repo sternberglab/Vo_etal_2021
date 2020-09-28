@@ -85,10 +85,12 @@ def get_efficiency(reads_file, genome, target):
 	uninterrupted_reads, other_site_reads, efficiency = None, None, None
 	if target:
 		site = genome.seq.upper().find(target)
-		if not site or site < 0:
-			raise Exception("Problem here")
 		# add length of target, and the span of +35 to +65
-		uninterrupted_insertion_site = genome.seq[site+len(target)+35:site+len(target)+65]
+		if site > 0:
+			uninterrupted_insertion_site = genome.seq[site+len(target)+35:site+len(target)+65]
+		else:
+			site = genome.seq.upper().reverse_complement().find(target)
+			uninterrupted_insertion_site = genome.seq.reverse_complement()[site+len(target)+35:site+len(target)+65]
 		uninterrupted_fasta = f'tmp/uninterrupted.fasta'
 		SeqIO.write(SeqRecord(uninterrupted_insertion_site, id="target"), uninterrupted_fasta, 'fasta')
 		blast_filename =  f'tmp/uninterrupted_blastresults.xml'
@@ -98,7 +100,9 @@ def get_efficiency(reads_file, genome, target):
 		hits = [hit for hit in res.hits if len(hit.hsps) == 1 and hit.hsps[0].ident_num > 28]
 		uninterrupted_reads = len(hits)
 
-		SeqIO.write(SeqRecord(genome.seq[site-50:site-20], id='site'), 'tmp/other_site.fasta', 'fasta')
+		# also do a blast for another random site in the genome to compare
+		other_site = site - 5000 if site > 20000 else site + 5000
+		SeqIO.write(SeqRecord(genome.seq[other_site:other_site+30], id='site'), 'tmp/other_site.fasta', 'fasta')
 		do_blast('tmp/other_site.fasta', reads_file, 'tmp/other_site_blast.xml')
 		res = SearchIO.read('tmp/other_site_blast.xml', 'blast-xml')
 		hits = [hit for hit in res.hits if len(hit.hsps) == 1 and hit.hsps[0].ident_num > 28]
@@ -119,7 +123,14 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 	genome = SeqIO.read(genome_file, 'fasta')
 	tn_length = len(tn)
 
-	target_location = genome.seq.upper().find(target) if target else None
+	target_insertion_site = None
+	if target:
+		target_insertion_site = genome.seq.upper().find(target)
+		if target_insertion_site >= 0:
+			target_insertion_site += len(target) + 49
+		else:
+			target_insertion_site = genome.seq.upper().reverse_complement().find(target) + len(target) + 49
+			target_insertion_site = len(genome.seq) - target_insertion_site
 
 	tn_start = plasmid.seq.find(tn.seq)
 	plasmid_l = plasmid.seq[tn_start-20:tn_start].upper()
@@ -150,7 +161,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 		if read_obj:
 			all_results.append(read_obj)
 
-	attach_alignments(all_results, basename, plasmid_file, genome_file, plasmid_ends, target_location)
+	attach_alignments(all_results, basename, plasmid_file, genome_file, plasmid_ends, target_insertion_site)
 	with open(f'outputs/output_{sample}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
 		writer.writerow(['read_id', 'type', 'hsps', 'ends', 'types', 'read_length', 'genome_location'])
@@ -188,10 +199,10 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 		if len(unknown):
 			SeqIO.write([r['read_seqrec'] for r in unknown[:10]], f"outputs/{sample}_unknowns.fasta", "fasta")
 		
-		if target_location:
+		if target_insertion_site:
 			reads_w_location = [r for r in all_results if 'genome_location' in r and r['type'] != 'unknown']
-			ontarget_reads = [r for r in reads_w_location if abs(target_location + 32+ 49 - r['genome_location']) < 100]
-		ontarget_perc = (len(ontarget_reads) / len(reads_w_location)) if target_location else None
+			ontarget_reads = [r for r in reads_w_location if abs(target_insertion_site - r['genome_location']) < 100]
+		ontarget_perc = (len(ontarget_reads) / len(reads_w_location)) if target_insertion_site else None
 		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficients), len(unknown), sample_desc, efficiency_results[0], efficiency_results[1], efficiency_results[2], ontarget_perc])
 	print("done")
 
@@ -230,7 +241,7 @@ def get_short_end_type(end, read, plasmid_ends):
 	else:
 		return 'unknown'
 
-def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends, target_location):
+def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends, target_insertion_site):
 	long_fp_seqs = [end['seqrec'] for r in results for end in r['ends'] if len(end['seqrec']) > 14]
 	short_fp_seqs = [end['seqrec'] for r in results for end in r['ends'] if len(end['seqrec']) <= 14]
 	
