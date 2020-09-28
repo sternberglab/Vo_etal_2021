@@ -202,7 +202,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 		if target_insertion_site:
 			reads_w_location = [r for r in all_results if 'genome_location' in r and r['type'] != 'unknown']
 			ontarget_reads = [r for r in reads_w_location if abs(target_insertion_site - r['genome_location']) < 100]
-		ontarget_perc = (len(ontarget_reads) / len(reads_w_location)) if target_insertion_site else None
+		ontarget_perc = (len(ontarget_reads) / len(reads_w_location)) if (target_insertion_site and reads_w_location) else None
 		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficients), len(unknown), sample_desc, efficiency_results[0], efficiency_results[1], efficiency_results[2], ontarget_perc])
 	print("done")
 
