@@ -18,7 +18,7 @@ today = date.today()
 output_name = f'all-{today.year}-{today.month}-{today.day}'
 # install blast locally
 # curl -O ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.10.1+-x64-linux.tar.gz && tar xzf ncbi-blast-2.10.1+-x64-linux.tar.gz && sudo cp ncbi-blast-2.10.1+/bin/* /usr/local/bin
-run_local = False
+run_local = True
 
 def hamming_dist(s1, s2):
     assert len(s1) == len(s2)
@@ -31,7 +31,7 @@ def main():
 	today = date.today()
 	with open(f'outputs/{output_name}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
-		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown', 'Sample Description', 'Uninterrupted insertion site reads', 'Normal site reads', 'Approx. Efficiency %', 'On-target %'])
+		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown', 'Sample Description', 'Uninterrupted insertion site reads', 'Normal site reads', 'Approx. Efficiency %', 'On-target %', 'weird_cointegrate_ct'])
 	
 	with open('input.csv', 'r', encoding='utf-8-sig') as infile:
 		reader = csv.DictReader(infile)
@@ -162,9 +162,10 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 			all_results.append(read_obj)
 
 	attach_alignments(all_results, basename, plasmid_file, genome_file, plasmid_ends, target_insertion_site)
+	
 	with open(f'outputs/output_{sample}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
-		writer.writerow(['read_id', 'type', 'hsps', 'ends', 'types', 'read_length', 'genome_location'])
+		writer.writerow(['read_id', 'type', 'hsps', 'ends', 'types', 'read_length', 'genome_location', 'is_weird_coint'])
 		for read in all_results:
 			hsps_formatted = ''
 			for pair in read['hsps']:
@@ -176,7 +177,10 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 			types = [e['type'] for e in read['ends']]
 			read['end_types'] = types
 			location = read['genome_location'] if 'genome_location' in read else None
-			writer.writerow([read['id'], read['type'], hsps, ends, types, read['len'], location])
+
+			is_weird = read['is_weird_coint']
+			writer.writerow([read['id'], read['type'], hsps, ends, types, read['len'], location, read['is_weird_coint']])
+	
 	with open(f'outputs/{output_name}.csv', 'a', newline='') as outfile:
 		writer = csv.writer(outfile)
 		cointegrates = [r for r in all_results if r['type'] is 'COINTEGRATE']
@@ -203,7 +207,8 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 			reads_w_location = [r for r in all_results if 'genome_location' in r and r['type'] != 'unknown']
 			ontarget_reads = [r for r in reads_w_location if abs(target_insertion_site - r['genome_location']) < 100]
 		ontarget_perc = (len(ontarget_reads) / len(reads_w_location)) if (target_insertion_site and reads_w_location) else None
-		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficients), len(unknown), sample_desc, efficiency_results[0], efficiency_results[1], efficiency_results[2], ontarget_perc])
+		weird_coint_ct = len([r for r in all_results if r['is_weird_coint']])
+		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficients), len(unknown), sample_desc, efficiency_results[0], efficiency_results[1], efficiency_results[2], ontarget_perc, weird_coint_ct])
 	print("done")
 
 def get_short_end_type(end, read, plasmid_ends):
@@ -316,6 +321,12 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 			read['type'] = 'unknown'
 		elif 'gn' in types and 'pl' in types:
 			read['type'] = 'COINTEGRATE'
+
+		if read['type'] is 'COINTEGRATE' and len([t for t in types if t == 'pl']) > 2:
+			read['is_weird_coint'] = True
+		else:
+			read['is_weird_coint'] = False
+
 	return results
 
 def get_read_obj(hit, tn_read, tn_length):
