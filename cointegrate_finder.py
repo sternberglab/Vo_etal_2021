@@ -18,14 +18,14 @@ today = date.today()
 output_name = f'all-{today.year}-{today.month}-{today.day}'
 # install blast locally
 # curl -O ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.10.1+-x64-linux.tar.gz && tar xzf ncbi-blast-2.10.1+-x64-linux.tar.gz && sudo cp ncbi-blast-2.10.1+/bin/* /usr/local/bin
-run_local = True
+run_local = False
 
 def hamming_dist(s1, s2):
     assert len(s1) == len(s2)
     return sum(ch1 != ch2 for ch1, ch2 in zip(s1, s2))
 
 def main():
-	os.makedirs(os.path.join(f"./outputs"), exist_ok=True)
+	'''os.makedirs(os.path.join(f"./outputs"), exist_ok=True)
 	os.makedirs(os.path.join(f"./bt2index"), exist_ok=True)
 	os.makedirs(os.path.join(f"./tmp"), exist_ok=True)
 	today = date.today()
@@ -47,7 +47,7 @@ def main():
 			print("-----")
 			process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sample_desc, target)
 			print("-----")
-
+	'''
 	if not run_local:
 		s3 = boto3.client('s3')
 		for filename in os.listdir('outputs'):
