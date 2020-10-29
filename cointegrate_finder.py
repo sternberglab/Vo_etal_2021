@@ -25,13 +25,13 @@ def hamming_dist(s1, s2):
     return sum(ch1 != ch2 for ch1, ch2 in zip(s1, s2))
 
 def main():
-	'''os.makedirs(os.path.join(f"./outputs"), exist_ok=True)
+	os.makedirs(os.path.join(f"./outputs"), exist_ok=True)
 	os.makedirs(os.path.join(f"./bt2index"), exist_ok=True)
 	os.makedirs(os.path.join(f"./tmp"), exist_ok=True)
 	today = date.today()
 	with open(f'outputs/{output_name}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
-		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown', 'Sample Description', 'Uninterrupted insertion site reads', 'Normal site reads', 'Approx. Efficiency %', 'On-target %', 'weird_cointegrate_ct'])
+		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown', 'Sample Description', 'Uninterrupted insertion site reads', 'Normal site reads', 'Approx. Efficiency %', 'On-target %', 'multi_cointegrate_ct'])
 	
 	with open('input.csv', 'r', encoding='utf-8-sig') as infile:
 		reader = csv.DictReader(infile)
@@ -47,7 +47,7 @@ def main():
 			print("-----")
 			process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sample_desc, target)
 			print("-----")
-	'''
+	
 	if not run_local:
 		s3 = boto3.client('s3')
 		for filename in os.listdir('outputs'):
@@ -122,6 +122,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 	tn = SeqIO.read(tn_file, 'fasta')
 	genome = SeqIO.read(genome_file, 'fasta')
 	tn_length = len(tn)
+	plasmid_length - len(plasmid)
 
 	target_insertion_site = None
 	if target:
@@ -165,7 +166,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 	
 	with open(f'outputs/output_{sample}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
-		writer.writerow(['read_id', 'type', 'hsps', 'ends', 'types', 'read_length', 'genome_location', 'is_weird_coint'])
+		writer.writerow(['read_id', 'type', 'hsps', 'ends', 'types', 'read_length', 'genome_location', 'is_multi_coint'])
 		for read in all_results:
 			hsps_formatted = ''
 			for pair in read['hsps']:
@@ -178,8 +179,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 			read['end_types'] = types
 			location = read['genome_location'] if 'genome_location' in read else None
 
-			is_weird = read['is_weird_coint']
-			writer.writerow([read['id'], read['type'], hsps, ends, types, read['len'], location, read['is_weird_coint']])
+			writer.writerow([read['id'], read['type'], hsps, ends, types, read['len'], location, read['is_multi_coint'], read['strange_pl']])
 	
 	with open(f'outputs/{output_name}.csv', 'a', newline='') as outfile:
 		writer = csv.writer(outfile)
@@ -207,8 +207,9 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 			reads_w_location = [r for r in all_results if 'genome_location' in r and r['type'] != 'unknown']
 			ontarget_reads = [r for r in reads_w_location if abs(target_insertion_site - r['genome_location']) < 100]
 		ontarget_perc = (len(ontarget_reads) / len(reads_w_location)) if (target_insertion_site and reads_w_location) else None
-		weird_coint_ct = len([r for r in all_results if r['is_weird_coint']])
-		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficients), len(unknown), sample_desc, efficiency_results[0], efficiency_results[1], efficiency_results[2], ontarget_perc, weird_coint_ct])
+		multi_coint_ct = len([r for r in all_results if r['is_multi_coint']])
+		strange_pl_ct = len([r for r in all_results if r['strange_pl'] is "TRUE"])
+		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficients), len(unknown), sample_desc, efficiency_results[0], efficiency_results[1], efficiency_results[2], ontarget_perc, multi_coint_ct, strange_pl])
 	print("done")
 
 def get_short_end_type(end, read, plasmid_ends):
@@ -251,6 +252,8 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 	short_fp_seqs = [end['seqrec'] for r in results for end in r['ends'] if len(end['seqrec']) <= 14]
 	
 	genome = SeqIO.read(genome_file, 'fasta')
+	plasmid = SeqIO.read(plasmid_file, 'fasta')
+	plasmid_length - len(plasmid)
 
 	tmp_fp_fasta_name = f'{basename}_fps.fasta'
 	SeqIO.write(long_fp_seqs, tmp_fp_fasta_name, 'fasta')
@@ -323,10 +326,14 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 			read['type'] = 'COINTEGRATE'
 
 		if read['type'] is 'COINTEGRATE' and len([t for t in types if t == 'pl']) > 2:
-			read['is_weird_coint'] = True
+			read['is_multi_coint'] = True
 		else:
-			read['is_weird_coint'] = False
+			read['is_multi_coint'] = False
 
+		if read['type'] is 'pl' and len(read['seqrec']) > (len(ends)+2)/2 *plasmid_length:
+			read['strange_pl'] = "TRUE"
+		else:
+			read['strange_pl'] = "F"
 	return results
 
 def get_read_obj(hit, tn_read, tn_length):
