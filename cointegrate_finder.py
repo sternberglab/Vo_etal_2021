@@ -31,7 +31,7 @@ def main():
 	today = date.today()
 	with open(f'outputs/{output_name}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
-		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'plasmids', 'insufficient', 'unknown', 'Sample Description', 'Uninterrupted insertion site reads', 'Normal site reads', 'Approx. Efficiency %', 'On-target %', 'multi_cointegrate_ct'])
+		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'pl_single', 'pl_mult', 'insufficient', 'unknown', 'Sample Description', 'Uninterrupted insertion site reads', 'Normal site reads', 'Approx. Efficiency %', 'On-target %', 'multi_cointegrate_ct'])
 	
 	with open('input.csv', 'r', encoding='utf-8-sig') as infile:
 		reader = csv.DictReader(infile)
@@ -192,7 +192,8 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 		genome_insertions = [r for r in all_results if r['type'] is 'GENOME']
 		if len(genome_insertions):
 			SeqIO.write([r['read_seqrec'] for r in genome_insertions[:10]], f"outputs/{sample}_genomic.fasta", "fasta")
-		plasmids = [r for r in all_results if r['type'] is 'pl']
+		pl_single = [r for r in all_results if r['type'] is 'pl1']
+		pl_multiple = [r for r in all_results if r['type'] is 'pl2+']
 		if len(plasmids):
 			SeqIO.write([r['read_seqrec'] for r in plasmids[:10]], f"outputs/{sample}_plasmids.fasta", "fasta")
 		insufficients = [r for r in all_results if r['type'] is 'partialRead']
@@ -208,7 +209,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 		ontarget_perc = (len(ontarget_reads) / len(reads_w_location)) if (target_insertion_site and reads_w_location) else None
 		multi_coint_ct = len([r for r in all_results if r['is_multi_coint']])
 		strange_pl_ct = len([r for r in all_results if r['strange_pl'] is "TRUE"])
-		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficients), len(unknown), sample_desc, efficiency_results[0], efficiency_results[1], efficiency_results[2], ontarget_perc, multi_coint_ct, strange_pl_ct])
+		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(pl_single), len(pl_multiple), len(insufficients), len(unknown), sample_desc, efficiency_results[0], efficiency_results[1], efficiency_results[2], ontarget_perc, multi_coint_ct, strange_pl_ct])
 	print("done")
 
 def get_short_end_type(end, read, plasmid_ends):
@@ -316,7 +317,7 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 		if len(types) < 2:
 			read['type'] = 'partialRead'
 		elif len(set(types)) == 1 and types[0] == 'pl':
-			read['type'] = 'pl'
+			read['type'] = 'pl1' if len(types) < 4 else 'pl2+'
 		elif len(set(types)) == 1 and types[0] == 'gn':
 			read['type'] = 'GENOME'
 		elif 'unknown' in types:
