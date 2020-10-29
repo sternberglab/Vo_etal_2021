@@ -329,7 +329,7 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 		else:
 			read['is_multi_coint'] = False
 
-		if read['type'] is 'pl' and len(read['seqrec']) > (len(ends)+2)/2 *plasmid_length:
+		if read['type'] is 'pl' and int(read['len']) > (len(ends)+2)/2 *plasmid_length:
 			read['strange_pl'] = "TRUE"
 		else:
 			read['strange_pl'] = "F"
