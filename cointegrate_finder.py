@@ -122,7 +122,6 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 	tn = SeqIO.read(tn_file, 'fasta')
 	genome = SeqIO.read(genome_file, 'fasta')
 	tn_length = len(tn)
-	plasmid_length - len(plasmid)
 
 	target_insertion_site = None
 	if target:
