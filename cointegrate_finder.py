@@ -252,7 +252,7 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 	
 	genome = SeqIO.read(genome_file, 'fasta')
 	plasmid = SeqIO.read(plasmid_file, 'fasta')
-	plasmid_length - len(plasmid)
+	plasmid_length = len(plasmid)
 
 	tmp_fp_fasta_name = f'{basename}_fps.fasta'
 	SeqIO.write(long_fp_seqs, tmp_fp_fasta_name, 'fasta')
