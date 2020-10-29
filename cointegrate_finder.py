@@ -208,7 +208,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 		ontarget_perc = (len(ontarget_reads) / len(reads_w_location)) if (target_insertion_site and reads_w_location) else None
 		multi_coint_ct = len([r for r in all_results if r['is_multi_coint']])
 		strange_pl_ct = len([r for r in all_results if r['strange_pl'] is "TRUE"])
-		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficients), len(unknown), sample_desc, efficiency_results[0], efficiency_results[1], efficiency_results[2], ontarget_perc, multi_coint_ct, strange_pl])
+		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(plasmids), len(insufficients), len(unknown), sample_desc, efficiency_results[0], efficiency_results[1], efficiency_results[2], ontarget_perc, multi_coint_ct, strange_pl_ct])
 	print("done")
 
 def get_short_end_type(end, read, plasmid_ends):
