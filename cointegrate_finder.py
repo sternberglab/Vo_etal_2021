@@ -192,8 +192,8 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 		genome_insertions = [r for r in all_results if r['type'] is 'GENOME']
 		if len(genome_insertions):
 			SeqIO.write([r['read_seqrec'] for r in genome_insertions[:10]], f"outputs/{sample}_genomic.fasta", "fasta")
-		pl_single = [r for r in all_results if r['type'] is 'pl1']
-		pl_multiple = [r for r in all_results if r['type'] is 'pl2+']
+		pl_single = [r for r in all_results if r['type'] is 'pl_single']
+		pl_multiple = [r for r in all_results if r['type'] is 'pl_multi']
 		if len(pl_single) or len(pl_multiple):
 			plasmids = pl_single + pl_multiple
 			SeqIO.write([r['read_seqrec'] for r in plasmids[:10]], f"outputs/{sample}_plasmids.fasta", "fasta")
@@ -319,9 +319,9 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 			read['type'] = 'partialRead'
 		elif len(set(types)) == 1 and types[0] == 'pl':
 			if len(types) < 4:
-				read['type'] = 'pl1'
+				read['type'] = 'pl_single'
 			else:
-				read['type'] = 'pl2+'
+				read['type'] = 'pl_multi'
 		elif len(set(types)) == 1 and types[0] == 'gn':
 			read['type'] = 'GENOME'
 		elif 'unknown' in types:
