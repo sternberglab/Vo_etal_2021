@@ -318,7 +318,10 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 		if len(types) < 2:
 			read['type'] = 'partialRead'
 		elif len(set(types)) == 1 and types[0] == 'pl':
-			read['type'] = 'pl1' if len(types) < 4 else 'pl2+'
+			if len(types) < 4:
+				read['type'] = 'pl1'
+			else:
+				read['type'] = 'pl2+'
 		elif len(set(types)) == 1 and types[0] == 'gn':
 			read['type'] = 'GENOME'
 		elif 'unknown' in types:
