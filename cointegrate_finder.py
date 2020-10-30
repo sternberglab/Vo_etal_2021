@@ -318,7 +318,7 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 		if len(types) < 2:
 			read['type'] = 'partialRead'
 		elif len(set(types)) == 1 and types[0] == 'pl':
-			if len(types) < 4:
+			if len(read['ends']) < 4:
 				read['type'] = 'pl_single'
 			else:
 				read['type'] = 'pl_multi'
