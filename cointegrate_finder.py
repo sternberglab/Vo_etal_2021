@@ -178,7 +178,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 			read['end_types'] = types
 			location = read['genome_location'] if 'genome_location' in read else None
 
-			writer.writerow([read['id'], read['type'], hsps, ends, types, read['len'], location, read['is_multi_coint'], read['strange_pl']])
+			writer.writerow([read['id'], read['type'], hsps, ends, types, read['len'], location, read['is_multi_coint']])
 	
 	with open(f'outputs/{output_name}.csv', 'a', newline='') as outfile:
 		writer = csv.writer(outfile)
@@ -209,8 +209,8 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 			ontarget_reads = [r for r in reads_w_location if abs(target_insertion_site - r['genome_location']) < 100]
 		ontarget_perc = (len(ontarget_reads) / len(reads_w_location)) if (target_insertion_site and reads_w_location) else None
 		multi_coint_ct = len([r for r in all_results if r['is_multi_coint']])
-		strange_pl_ct = len([r for r in all_results if r['strange_pl'] is "TRUE"])
-		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(pl_single), len(pl_multiple), len(insufficients), len(unknown), sample_desc, efficiency_results[0], efficiency_results[1], efficiency_results[2], ontarget_perc, multi_coint_ct, strange_pl_ct])
+		#strange_pl_ct = len([r for r in all_results if r['strange_pl'] is "TRUE"])
+		writer.writerow([sample, len(all_results), len(cointegrates), len(genome_insertions), len(pl_single), len(pl_multiple), len(insufficients), len(unknown), sample_desc, efficiency_results[0], efficiency_results[1], efficiency_results[2], ontarget_perc, multi_coint_ct])
 	print("done")
 
 def get_short_end_type(end, read, plasmid_ends):
@@ -334,10 +334,12 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 		else:
 			read['is_multi_coint'] = False
 
+		'''
 		if 'pl' in read['type'] and int(read['len']) > (len(read['ends'])+2)/2 *plasmid_length:
 			read['strange_pl'] = "TRUE"
 		else:
 			read['strange_pl'] = "F"
+		'''
 	return results
 
 def get_read_obj(hit, tn_read, tn_length):
