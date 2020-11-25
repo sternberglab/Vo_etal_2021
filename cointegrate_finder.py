@@ -33,7 +33,7 @@ def main():
 		writer = csv.writer(outfile)
 		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'pl_single', 'pl_mult', 'insufficient', 'unknown', 'Sample Description', 'Uninterrupted insertion site reads', 'Normal site reads', 'Approx. Efficiency %', 'On-target %', 'multi_cointegrate_ct'])
 	
-	with open('input2.csv', 'r', encoding='utf-8-sig') as infile:
+	with open('input.csv', 'r', encoding='utf-8-sig') as infile:
 		reader = csv.DictReader(infile)
 		for row in reader:
 			reads_file = row['Reads File']
@@ -180,7 +180,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 			location = read['genome_location'] if 'genome_location' in read else None
 
 			writer.writerow([read['id'], read['type'], hsps, ends, types, read['len'], location, read['is_multi_coint']])
-	with open(f'outputs/{sample}_end_lengths.csv', 'w', newline='') as outfile:
+	with open(f'outputs/end_lengths/{sample}_end_lengths.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
 		writer.writerow(['end_length', 'count'])
 		for length, ct in sorted(all_end_lengths.items()):
@@ -363,6 +363,19 @@ def get_read_obj(hit, tn_read, tn_length, all_end_lengths):
 		is_start = hsp.hit_start < 4
 		is_end = hit.seq_len - hsp.hit_end < 4
 
+		# L end length
+		end_length = min(hsp.hit_start - prev_end, 1000)
+		if end_length in all_end_lengths:
+			all_end_lengths[end_length] += 1
+		else:
+			all_end_lengths[end_length] = 1
+		# R end length
+		end_length = min(next_start - hsp.hit_end, 1000)
+			if end_length in all_end_lengths:
+				all_end_lengths[end_length] += 1
+			else:
+				all_end_lengths[end_length] = 1
+
 		if not is_start:
 			seqid = f'{hit.id}___{i}l'
 			left_fp = tn_read.seq[max(prev_end, hsp.hit_start-40): hsp.hit_start]
@@ -372,11 +385,7 @@ def get_read_obj(hit, tn_read, tn_length, all_end_lengths):
 				'eval': hsp.evalue,
 				'seqrec': SeqRecord(left_fp, id=seqid, description=seqid, name=seqid)
 			})
-			end_length = min(hsp.hit_start - prev_end, 1000)
-			if end_length in all_end_lengths:
-				all_end_lengths[end_length] += 1
-			else:
-				all_end_lengths[end_length] = 1
+			
 
 
 		if not is_end:
@@ -392,12 +401,6 @@ def get_read_obj(hit, tn_read, tn_length, all_end_lengths):
 				'rv': hsp.hit_strand == -1,
 				'seqrec': SeqRecord(right_fp, id=seqid, description=seqid, name=seqid)
 			})
-
-			end_length = min(next_start - hsp.hit_end, 1000)
-			if end_length in all_end_lengths:
-				all_end_lengths[end_length] += 1
-			else:
-				all_end_lengths[end_length] = 1
 
 		prev_end = hsp.hit_end
 	if len(read_result["hsps"]):
