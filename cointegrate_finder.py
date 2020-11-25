@@ -27,7 +27,7 @@ def hamming_dist(s1, s2):
     return sum(ch1 != ch2 for ch1, ch2 in zip(s1, s2))
 
 def main():
-	os.makedirs(os.path.join(f"./outputs/end_lengths"), exist_ok=True)
+	os.makedirs(os.path.join(f"./outputs"), exist_ok=True)
 	os.makedirs(os.path.join(f"./bt2index"), exist_ok=True)
 	os.makedirs(os.path.join(f"./tmp"), exist_ok=True)
 	today = date.today()
@@ -54,8 +54,8 @@ def main():
 		s3 = boto3.client('s3')
 		for root, dirs, filenames in os.walk('outputs'):
 			for filename in filenames:
-				filename = os.path.join(root, filename)
-				s3key = f"cointegrate_{filename}"
+				#filename = os.path.join(root, filename)
+				s3key = f"cointegrate_outputs/{str(MIN_END_LENGTH)}bp_min_endlength/{filename}"
 				s3.upload_file(f"{filename}", "sternberg-sequencing-data", s3key)
 
 	print("done")
@@ -199,22 +199,22 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 		selected_cointegrates = [r for r in cointegrates if len(r['end_types']) is 4]
 		if len(selected_cointegrates) < 2 and len(cointegrates) > 9:
 			selected_cointegrates = cointegrates
-		if len(selected_cointegrates):
-			SeqIO.write([r['read_seqrec'] for r in selected_cointegrates[:10]], f"outputs/{sample}_cointegrates.fasta", "fasta")
+		#if len(selected_cointegrates):
+		#	SeqIO.write([r['read_seqrec'] for r in selected_cointegrates[:10]], f"outputs/{sample}_cointegrates.fasta", "fasta")
 		genome_insertions = [r for r in all_results if r['type'] is 'GENOME']
-		if len(genome_insertions):
-			SeqIO.write([r['read_seqrec'] for r in genome_insertions[:10]], f"outputs/{sample}_genomic.fasta", "fasta")
+		#if len(genome_insertions):
+		#	SeqIO.write([r['read_seqrec'] for r in genome_insertions[:10]], f"outputs/{sample}_genomic.fasta", "fasta")
 		pl_single = [r for r in all_results if r['type'] is 'pl_single']
 		pl_multiple = [r for r in all_results if r['type'] is 'pl_multi']
 		if len(pl_single) or len(pl_multiple):
 			plasmids = pl_single + pl_multiple
-			SeqIO.write([r['read_seqrec'] for r in plasmids[:10]], f"outputs/{sample}_plasmids.fasta", "fasta")
+			#SeqIO.write([r['read_seqrec'] for r in plasmids[:10]], f"outputs/{sample}_plasmids.fasta", "fasta")
 		insufficients = [r for r in all_results if r['type'] is 'partialRead']
-		if len(insufficients):
-			SeqIO.write([r['read_seqrec'] for r in insufficients[:10]], f"outputs/{sample}_insufficient.fasta", "fasta")
+		#if len(insufficients):
+		#	SeqIO.write([r['read_seqrec'] for r in insufficients[:10]], f"outputs/{sample}_insufficient.fasta", "fasta")
 		unknown = [r for r in all_results if r['type'] is 'unknown']
-		if len(unknown):
-			SeqIO.write([r['read_seqrec'] for r in unknown[:10]], f"outputs/{sample}_unknowns.fasta", "fasta")
+		#if len(unknown):
+		#	SeqIO.write([r['read_seqrec'] for r in unknown[:10]], f"outputs/{sample}_unknowns.fasta", "fasta")
 		
 		if target_insertion_site:
 			reads_w_location = [r for r in all_results if 'genome_location' in r and r['type'] != 'unknown']
