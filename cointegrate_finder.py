@@ -351,6 +351,7 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 def get_read_obj(hit, tn_read, tn_length, all_end_lengths):
 	read_result = {'id': hit.id, 'hit': hit, 'hsps': [], 'ends': [], 'result': None, 'len': hit.seq_len, 'read_seqrec': tn_read}
 	prev_end = 0
+
 	valid_hits = [hsp for hsp in hit.hsps if (hsp.hit_end - hsp.hit_start) > (tn_length - 5)]
 	valid_hits = sorted(valid_hits, key=lambda x: x.hit_start)
 	# each hsps represents a unique alignment in the read
@@ -360,6 +361,9 @@ def get_read_obj(hit, tn_read, tn_length, all_end_lengths):
 		if hsp.evalue > 0.000001:
 			continue
 		read_result['hsps'].append((hsp.hit_start, hsp.hit_end))
+		next_start = hit.seq_len
+		if i+1 < len(valid_hits):
+			next_start = sorted(valid_hits, key=lambda x: x.hit_start)[i+1].hit_start
 		is_start = hsp.hit_start < 4
 		is_end = hit.seq_len - hsp.hit_end < 4
 
@@ -386,14 +390,8 @@ def get_read_obj(hit, tn_read, tn_length, all_end_lengths):
 				'seqrec': SeqRecord(left_fp, id=seqid, description=seqid, name=seqid)
 			})
 			
-
-
 		if not is_end:
 			seqid = f'{hit.id}___{i}r'
-			next_start = hit.seq_len
-			if i+1 < len(valid_hits):
-				next_start = sorted(valid_hits, key=lambda x: x.hit_start)[i+1].hit_start
-			
 			right_fp = tn_read.seq[hsp.hit_end:min(next_start, hsp.hit_end+40)]
 			read_result['ends'].append({
 				'id': seqid,
