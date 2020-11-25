@@ -25,7 +25,7 @@ def hamming_dist(s1, s2):
     return sum(ch1 != ch2 for ch1, ch2 in zip(s1, s2))
 
 def main():
-	os.makedirs(os.path.join(f"./outputs"), exist_ok=True)
+	os.makedirs(os.path.join(f"./outputs/end_lengths"), exist_ok=True)
 	os.makedirs(os.path.join(f"./bt2index"), exist_ok=True)
 	os.makedirs(os.path.join(f"./tmp"), exist_ok=True)
 	today = date.today()
