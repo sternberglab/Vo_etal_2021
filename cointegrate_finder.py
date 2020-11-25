@@ -55,7 +55,6 @@ def main():
 				filename = os.path.join(root, filename)
 				s3key = f"cointegrate_{filename}"
 				s3.upload_file(f"{filename}", "sternberg-sequencing-data", s3key)
-			else:
 
 	print("done")
 
