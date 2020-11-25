@@ -20,7 +20,7 @@ output_name = f'all-{today.year}-{today.month}-{today.day}'
 # curl -O ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.11.0+-x64-linux.tar.gz && tar xzf ncbi-blast-2.11.0+-x64-linux.tar.gz && sudo cp ncbi-blast-2.11.0+/bin/* /usr/local/bin
 run_local = False
 
-MIN_END_LENGTH = 50
+MIN_END_LENGTH = 100
 
 def hamming_dist(s1, s2):
     assert len(s1) == len(s2)
