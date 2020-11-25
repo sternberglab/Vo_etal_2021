@@ -183,7 +183,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 	with open(f'outputs/{sample}_end_lengths.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
 		writer.writerow(['end_length', 'count'])
-		for length, ct in all_end_lengths.items():
+		for length, ct in sorted(all_end_lengths.items()):
 			writer.writerow([str(length), str(ct)])
 
 	with open(f'outputs/{output_name}.csv', 'a', newline='') as outfile:
