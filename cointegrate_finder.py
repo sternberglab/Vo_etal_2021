@@ -33,7 +33,7 @@ def main():
 		writer = csv.writer(outfile)
 		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'pl_single', 'pl_mult', 'insufficient', 'unknown', 'Sample Description', 'Uninterrupted insertion site reads', 'Normal site reads', 'Approx. Efficiency %', 'On-target %', 'multi_cointegrate_ct'])
 	
-	with open('input.csv', 'r', encoding='utf-8-sig') as infile:
+	with open('input2.csv', 'r', encoding='utf-8-sig') as infile:
 		reader = csv.DictReader(infile)
 		for row in reader:
 			reads_file = row['Reads File']
@@ -154,10 +154,11 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 	efficiency_results = get_efficiency(reads_file, genome, target)
 
 	all_results = []
+	all_end_lengths = {}
 	# each hit represents one or more matches of the query against a read sequence
 	for hit in res.hits:
 		tn_read = next(r for r in tn_reads if r.id == hit.id)
-		read_obj = get_read_obj(hit, tn_read, tn_length)
+		read_obj = get_read_obj(hit, tn_read, tn_length, all_end_lengths)
 		if read_obj:
 			all_results.append(read_obj)
 
@@ -179,7 +180,12 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 			location = read['genome_location'] if 'genome_location' in read else None
 
 			writer.writerow([read['id'], read['type'], hsps, ends, types, read['len'], location, read['is_multi_coint']])
-	
+	with open(f'outputs/{sample}_end_lengths.csv', 'w', newline='') as outfile:
+		writer = csv.writer(outfile)
+		writer.writerow(['end_length', 'count'])
+		for length, ct in all_end_lengths.items():
+			writer.writerow([str(length), str(ct)])
+
 	with open(f'outputs/{output_name}.csv', 'a', newline='') as outfile:
 		writer = csv.writer(outfile)
 		cointegrates = [r for r in all_results if r['type'] is 'COINTEGRATE']
@@ -243,7 +249,7 @@ def get_short_end_type(end, read, plasmid_ends):
 		return 'unknown'
 	if end_seq == plasmid_r or end_seq == plasmid_l:
 		return 'pl'
-	elif end_seq == end_dupe and other_end['type'] == 'gn':
+	elif end_seq[:len(end_dupe)] == end_dupe and other_end['type'] == 'gn':
 		return 'gn'
 	else:
 		return 'unknown'
@@ -342,7 +348,7 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 		'''
 	return results
 
-def get_read_obj(hit, tn_read, tn_length):
+def get_read_obj(hit, tn_read, tn_length, all_end_lengths):
 	read_result = {'id': hit.id, 'hit': hit, 'hsps': [], 'ends': [], 'result': None, 'len': hit.seq_len, 'read_seqrec': tn_read}
 	prev_end = 0
 	valid_hits = [hsp for hsp in hit.hsps if (hsp.hit_end - hsp.hit_start) > (tn_length - 5)]
@@ -366,6 +372,11 @@ def get_read_obj(hit, tn_read, tn_length):
 				'eval': hsp.evalue,
 				'seqrec': SeqRecord(left_fp, id=seqid, description=seqid, name=seqid)
 			})
+			end_length = min(hsp.hit_start - prev_end, 1000)
+			if end_length in all_end_lengths:
+				all_end_lengths[end_length] += 1
+			else:
+				all_end_lengths[end_length] = 1
 
 
 		if not is_end:
@@ -381,6 +392,13 @@ def get_read_obj(hit, tn_read, tn_length):
 				'rv': hsp.hit_strand == -1,
 				'seqrec': SeqRecord(right_fp, id=seqid, description=seqid, name=seqid)
 			})
+
+			end_length = min(next_start - hsp.hit_end, 1000)
+			if end_length in all_end_lengths:
+				all_end_lengths[end_length] += 1
+			else:
+				all_end_lengths[end_length] = 1
+
 		prev_end = hsp.hit_end
 	if len(read_result["hsps"]):
 		return read_result
