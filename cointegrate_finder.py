@@ -28,7 +28,7 @@ def main():
 	os.makedirs(os.path.join(f"./outputs/end_lengths"), exist_ok=True)
 	os.makedirs(os.path.join(f"./bt2index"), exist_ok=True)
 	os.makedirs(os.path.join(f"./tmp"), exist_ok=True)
-	today = date.today()
+	'''today = date.today()
 	with open(f'outputs/{output_name}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
 		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'pl_single', 'pl_mult', 'insufficient', 'unknown', 'Sample Description', 'Uninterrupted insertion site reads', 'Normal site reads', 'Approx. Efficiency %', 'On-target %', 'multi_cointegrate_ct'])
@@ -47,12 +47,16 @@ def main():
 			print("-----")
 			process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sample_desc, target)
 			print("-----")
-	
+	'''
 	if not run_local:
 		s3 = boto3.client('s3')
-		for filename in os.listdir('outputs'):
-			s3key = f"cointegrate_outputs/{filename}"
-			s3.upload_file(f"outputs/{filename}", "sternberg-sequencing-data", s3key)
+		for root, dirs, filenames in os.walk('outputs'):
+			for filename in filenames:
+				filename = os.path.join(root, filename)
+				s3key = f"cointegrate_{filename}"
+				s3.upload_file(f"{filename}", "sternberg-sequencing-data", s3key)
+			else:
+
 	print("done")
 
 def download_s3(filename, isNotSample=True):
