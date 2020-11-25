@@ -20,6 +20,8 @@ output_name = f'all-{today.year}-{today.month}-{today.day}'
 # curl -O ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.10.1+-x64-linux.tar.gz && tar xzf ncbi-blast-2.10.1+-x64-linux.tar.gz && sudo cp ncbi-blast-2.10.1+/bin/* /usr/local/bin
 run_local = False
 
+MIN_END_LENGTH = 20
+
 def hamming_dist(s1, s2):
     assert len(s1) == len(s2)
     return sum(ch1 != ch2 for ch1, ch2 in zip(s1, s2))
@@ -28,7 +30,7 @@ def main():
 	os.makedirs(os.path.join(f"./outputs/end_lengths"), exist_ok=True)
 	os.makedirs(os.path.join(f"./bt2index"), exist_ok=True)
 	os.makedirs(os.path.join(f"./tmp"), exist_ok=True)
-	'''today = date.today()
+	today = date.today()
 	with open(f'outputs/{output_name}.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
 		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'pl_single', 'pl_mult', 'insufficient', 'unknown', 'Sample Description', 'Uninterrupted insertion site reads', 'Normal site reads', 'Approx. Efficiency %', 'On-target %', 'multi_cointegrate_ct'])
@@ -47,7 +49,7 @@ def main():
 			print("-----")
 			process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sample_desc, target)
 			print("-----")
-	'''
+	
 	if not run_local:
 		s3 = boto3.client('s3')
 		for root, dirs, filenames in os.walk('outputs'):
@@ -183,12 +185,13 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 			location = read['genome_location'] if 'genome_location' in read else None
 
 			writer.writerow([read['id'], read['type'], hsps, ends, types, read['len'], location, read['is_multi_coint']])
+	'''
 	with open(f'outputs/end_lengths/{sample}_end_lengths.csv', 'w', newline='') as outfile:
 		writer = csv.writer(outfile)
 		writer.writerow(['end_length', 'count'])
 		for length, ct in sorted(all_end_lengths.items()):
 			writer.writerow([str(length), str(ct)])
-
+	'''
 	with open(f'outputs/{output_name}.csv', 'a', newline='') as outfile:
 		writer = csv.writer(outfile)
 		cointegrates = [r for r in all_results if r['type'] is 'COINTEGRATE']
@@ -278,41 +281,43 @@ def attach_alignments(results, basename, plasmid_file, genome_file, plasmid_ends
 
 	for read in results:
 		for end in read['ends']:
-			if len(end['seqrec'].seq) > 14:
-				pl_score = next((p.tags['NM'] for p in plasmid_reads if p.qname == end['id']), 1000)
-				gn_reads = [g for g in genome_reads if g.qname == end['id']]
-				
-				min_nm = min([g.tags['NM'] for g in gn_reads]) if len(gn_reads) else 1000
-				gn_read = [g for g in gn_reads if g.tags['NM'] == min_nm][0] if gn_reads else None
-				gn_score = min_nm
-				if pl_score < gn_score and int(pl_score) < 3:
-					end['type'] = 'pl'
-				elif pl_score > gn_score and int(gn_score) < 3:
-					end['type'] = 'gn'
-					# get the location of the read based on if it's to the left or right of the transposon, and the orientation of the read
-					# the blast result flips the read, not the tn, so left is always BEFORE the raw tn sequence, not necessarily lower ref in the genome
-					# so if it was a reverse read, we actually want the 'right' end (which is lower ref in the genome)
-					is_left = end['id'][-1] is 'l'
-					if (is_left and not gn_read.reverse) or (gn_read.reverse and not is_left):
-						# no -1 because the +1 location site and bowtie 1-indexing cancel
-						location = gn_read.coords[-1]
-					else:
-						# -1 because this read already starts AFTER the transposon and bowtie is 1-indexed
-						location = gn_read.coords[0] - 1 + 5
-					end['genome_location'] = location
+			#if len(end['seqrec'].seq) > 14:
+			pl_score = next((p.tags['NM'] for p in plasmid_reads if p.qname == end['id']), 1000)
+			gn_reads = [g for g in genome_reads if g.qname == end['id']]
+			
+			min_nm = min([g.tags['NM'] for g in gn_reads]) if len(gn_reads) else 1000
+			gn_read = [g for g in gn_reads if g.tags['NM'] == min_nm][0] if gn_reads else None
+			gn_score = min_nm
+			if pl_score < gn_score and int(pl_score) < 3:
+				end['type'] = 'pl'
+			elif pl_score > gn_score and int(gn_score) < 3:
+				end['type'] = 'gn'
+				# get the location of the read based on if it's to the left or right of the transposon, and the orientation of the read
+				# the blast result flips the read, not the tn, so left is always BEFORE the raw tn sequence, not necessarily lower ref in the genome
+				# so if it was a reverse read, we actually want the 'right' end (which is lower ref in the genome)
+				is_left = end['id'][-1] is 'l'
+				if (is_left and not gn_read.reverse) or (gn_read.reverse and not is_left):
+					# no -1 because the +1 location site and bowtie 1-indexing cancel
+					location = gn_read.coords[-1]
 				else:
-					for i in range(len(read['hsps'])):
-						gaps = []
-						if i>=1:
-							hit_gap = read['hsps'][i][1] - read['hsps'][i-1][1]
-							gaps.append(hit_gap)
-					if gaps and all([g<3450 and g>3420 for g in gaps]):
-						end['type'] = 'pl'
-					else:
-						end['type'] = 'unknown'
+					# -1 because this read already starts AFTER the transposon and bowtie is 1-indexed
+					location = gn_read.coords[0] - 1 + 5
+				end['genome_location'] = location
+			else:
+				for i in range(len(read['hsps'])):
+					gaps = []
+					if i>=1:
+						hit_gap = read['hsps'][i][1] - read['hsps'][i-1][1]
+						gaps.append(hit_gap)
+				if gaps and all([g<3450 and g>3420 for g in gaps]):
+					end['type'] = 'pl'
+				else:
+					end['type'] = 'unknown'
+		'''
 		for end in read['ends']:
 			if 'type' not in end:
 				end['type'] = get_short_end_type(end, read, plasmid_ends)
+		'''
 		types = [e['type'] for e in read['ends']]
 
 		locations = [e for e in read['ends'] if 'genome_location' in e]
@@ -367,9 +372,10 @@ def get_read_obj(hit, tn_read, tn_length, all_end_lengths):
 		next_start = hit.seq_len
 		if i+1 < len(valid_hits):
 			next_start = sorted(valid_hits, key=lambda x: x.hit_start)[i+1].hit_start
-		is_start = hsp.hit_start < 4
-		is_end = hit.seq_len - hsp.hit_end < 4
+		is_start = hsp.hit_start < MIN_END_LENGTH
+		is_end = hit.seq_len - hsp.hit_end < MIN_END_LENGTH
 
+		'''
 		# L end length
 		end_length = min(hsp.hit_start - prev_end, 1000)
 		if end_length in all_end_lengths:
@@ -382,6 +388,7 @@ def get_read_obj(hit, tn_read, tn_length, all_end_lengths):
 			all_end_lengths[end_length] += 1
 		else:
 			all_end_lengths[end_length] = 1
+			'''
 
 		if not is_start:
 			seqid = f'{hit.id}___{i}l'
