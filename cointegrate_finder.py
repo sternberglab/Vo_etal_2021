@@ -371,10 +371,10 @@ def get_read_obj(hit, tn_read, tn_length, all_end_lengths):
 			all_end_lengths[end_length] = 1
 		# R end length
 		end_length = min(next_start - hsp.hit_end, 1000)
-			if end_length in all_end_lengths:
-				all_end_lengths[end_length] += 1
-			else:
-				all_end_lengths[end_length] = 1
+		if end_length in all_end_lengths:
+			all_end_lengths[end_length] += 1
+		else:
+			all_end_lengths[end_length] = 1
 
 		if not is_start:
 			seqid = f'{hit.id}___{i}l'
