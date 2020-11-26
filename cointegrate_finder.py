@@ -23,7 +23,7 @@ output_name = f'all-{today.year}-{today.month}-{today.day}'
 
 run_local = False
 
-MIN_END_LENGTH = 20
+MIN_END_LENGTH = 50
 
 def hamming_dist(s1, s2):
     assert len(s1) == len(s2)
