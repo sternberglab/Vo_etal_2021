@@ -18,15 +18,19 @@ today = date.today()
 output_name = f'all-{today.year}-{today.month}-{today.day}'
 # install blast locally
 # curl -O ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.11.0+-x64-linux.tar.gz && tar xzf ncbi-blast-2.11.0+-x64-linux.tar.gz && sudo cp ncbi-blast-2.11.0+/bin/* /usr/local/bin
+# install bowtie2 locally
+# curl -L -O https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.4.1/bowtie2-2.4.1-linux-x86_64.zip && unzip bowtie2-2.4.1-linux-x86_64.zip && sudo cp bowtie2-2.4.1-linux-x86_64/* /usr/local/bin
+
 run_local = False
 
-MIN_END_LENGTH = 100
+MIN_END_LENGTH = 20
 
 def hamming_dist(s1, s2):
     assert len(s1) == len(s2)
     return sum(ch1 != ch2 for ch1, ch2 in zip(s1, s2))
 
 def main():
+	'''
 	os.makedirs(os.path.join(f"./outputs"), exist_ok=True)
 	os.makedirs(os.path.join(f"./bt2index"), exist_ok=True)
 	os.makedirs(os.path.join(f"./tmp"), exist_ok=True)
@@ -49,14 +53,14 @@ def main():
 			print("-----")
 			process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sample_desc, target)
 			print("-----")
-	
+	'''
 	if not run_local:
 		s3 = boto3.client('s3')
 		for root, dirs, filenames in os.walk('outputs'):
 			for filename in filenames:
 				#filename = os.path.join(root, filename)
 				s3key = f"cointegrate_outputs/{str(MIN_END_LENGTH)}bp_min_endlength/{filename}"
-				s3.upload_file(f"{filename}", "sternberg-sequencing-data", s3key)
+				s3.upload_file(f"outputs/{filename}", "sternberg-sequencing-data", s3key)
 
 	print("done")
 
