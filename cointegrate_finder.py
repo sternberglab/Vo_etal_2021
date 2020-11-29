@@ -24,7 +24,7 @@ output_name = f'all-{today.year}-{today.month}-{today.day}'
 run_local = False
 
 MIN_END_LENGTH = 50
-INTEGRATION_SITE_DISTANCE = 49
+INTEGRATION_SITE_DISTANCE = 40
 
 def hamming_dist(s1, s2):
     assert len(s1) == len(s2)
@@ -59,7 +59,7 @@ def main():
 		for root, dirs, filenames in os.walk('outputs'):
 			for filename in filenames:
 				#filename = os.path.join(root, filename)
-				s3key = f"cointegrate_outputs/{str(MIN_END_LENGTH)}bp_min_endlength/{filename}"
+				s3key = f"cointegrate_outputs/{str(MIN_END_LENGTH)}bp_min_endlength_40bp_intsite/{filename}"
 				s3.upload_file(f"outputs/{filename}", "sternberg-sequencing-data", s3key)
 
 	print("done")
