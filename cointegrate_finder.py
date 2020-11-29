@@ -23,7 +23,8 @@ output_name = f'all-{today.year}-{today.month}-{today.day}'
 
 run_local = False
 
-MIN_END_LENGTH = 100
+MIN_END_LENGTH = 50
+INTEGRATION_SITE_DISTANCE = 49
 
 def hamming_dist(s1, s2):
     assert len(s1) == len(s2)
@@ -136,9 +137,9 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 	if target:
 		target_insertion_site = genome.seq.upper().find(target)
 		if target_insertion_site >= 0:
-			target_insertion_site += len(target) + 49
+			target_insertion_site += len(target) + INTEGRATION_SITE_DISTANCE
 		else:
-			target_insertion_site = genome.seq.upper().reverse_complement().find(target) + len(target) + 49
+			target_insertion_site = genome.seq.upper().reverse_complement().find(target) + len(target) + INTEGRATION_SITE_DISTANCE
 			target_insertion_site = len(genome.seq) - target_insertion_site
 
 	tn_start = plasmid.seq.find(tn.seq)
@@ -221,7 +222,7 @@ def process_sample(reads_file, tn_file, plasmid_file, genome_file, sample, sampl
 		#	SeqIO.write([r['read_seqrec'] for r in unknown[:10]], f"outputs/{sample}_unknowns.fasta", "fasta")
 		
 		if target_insertion_site:
-			reads_w_location = [r for r in all_results if 'genome_location' in r and r['type'] != 'unknown']
+			reads_w_location = [r for r in all_results if 'genome_location' in r and (r['type'] == 'COINTEGRATE' or r['type'] == 'GENOME')]
 			ontarget_reads = [r for r in reads_w_location if abs(target_insertion_site - r['genome_location']) < 100]
 		ontarget_perc = (len(ontarget_reads) / len(reads_w_location)) if (target_insertion_site and reads_w_location) else None
 		multi_coint_ct = len([r for r in all_results if r['is_multi_coint']])
