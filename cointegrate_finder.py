@@ -28,7 +28,7 @@ output_name = f'all-{today.year}-{today.month}-{today.day}'
 run_local = False
 
 MIN_END_LENGTH = 50
-INTEGRATION_SITE_DISTANCE = 49
+INTEGRATION_SITE_DISTANCE = 40
 S3_BUCKET = 'sternberg-sequencing-data'
 
 def hamming_dist(s1, s2):
@@ -47,7 +47,7 @@ def main():
 		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'pl_single', 'pl_mult', 'insufficient', 'unknown', 'Sample Description', 'Uninterrupted insertion site reads', 'Normal site reads', 'Approx. Efficiency %', 'On-target %', 'multi_cointegrate_ct'])
 	
 	# read the input file
-	with open('input_vchfusion.csv', 'r', encoding='utf-8-sig') as infile:
+	with open('input_shoINT.csv', 'r', encoding='utf-8-sig') as infile:
 		reader = csv.DictReader(infile)
 		for row in reader:
 			reads_file = row['Reads File']
