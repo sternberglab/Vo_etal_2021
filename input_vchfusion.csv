@@ -1,0 +1,7 @@
+Reads File,Tn File,Plasmid File,Genome File,Sample Code,Sample Desc,Target Sequence
+PBG-3001.PB000267_SLMS_89_BC72_p6_8M_30hCCS1210_.CCS2.0000005621.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_89,WT Vch Fusion T13 BW Rep 1,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-3001.PB000267_SLMS_90_BC73_p6_8M_30hCCS1210_.CCS2.0000005620.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_90,WT Vch Fusion T13 BW Rep 2,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-3001.PB000267_SLMS_91_BC74_p6_8M_30hCCS1210_.CCS2.0000005619.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_91,WT Vch Fusion T13 BW Rep 3,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-3001.PB000267_SLMS_92_BC75_p6_8M_30hCCS1210_.CCS2.0000005618.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_92,TnsAmut Vch Fusion T13 BW Rep 1,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-3001.PB000267_SLMS_93_BC76_p6_8M_30hCCS1210_.CCS2.0000005617.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_93,TnsAmut Vch Fusion T13 BW Rep 2,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
+PBG-3001.PB000267_SLMS_94_BC77_p6_8M_30hCCS1210_.CCS2.0000005616.fasta.gz,vch_wt_tn.fasta,vch_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_94,TnsAmut Vch Fusion T13 BW Rep 3,GAGAATATTGTGGCAAAAGCGCATAAGGTGCT
