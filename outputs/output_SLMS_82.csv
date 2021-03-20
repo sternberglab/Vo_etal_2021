@@ -1,0 +1,2 @@
+read_id,type,hsps,ends,types,read_length,genome_location,is_multi_coint
+m54312U_200818_234926/56232794/ccs,pl_multi,642-1881 _ 5430-6669,"['6/56232794/ccs___0l', '6/56232794/ccs___0r', '6/56232794/ccs___1l', '6/56232794/ccs___1r']","['pl', 'pl', 'pl', 'pl']",10243,,False

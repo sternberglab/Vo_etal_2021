@@ -1,0 +1,2 @@
+read_id,type,hsps,ends,types,read_length,genome_location,is_multi_coint
+m54312U_200808_073815/24119715/ccs,pl_single,3624-5091,"['5/24119715/ccs___0l', '5/24119715/ccs___0r']","['pl', 'pl']",7049,,False

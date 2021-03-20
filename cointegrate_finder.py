@@ -9,8 +9,8 @@ import multiprocessing
 import subprocess
 import os
 import csv
-import boto3
 import botocore
+import boto3
 from pathlib import Path
 from simplesam import Reader as samReader
 
@@ -47,6 +47,7 @@ def main():
 		writer.writerow(['Read_file', 'total_tn_reads', 'cointegrates', 'genomic_insertions', 'pl_single', 'pl_mult', 'insufficient', 'unknown', 'Sample Description', 'Uninterrupted insertion site reads', 'Normal site reads', 'Approx. Efficiency %', 'On-target %', 'multi_cointegrate_ct'])
 	
 	# read the input file
+	# this was run for each of the 3 input files (input.csv, input_shoINT.csv, and input.vchfusion.csv)
 	with open('input_vchfusion.csv', 'r', encoding='utf-8-sig') as infile:
 		reader = csv.DictReader(infile)
 		for row in reader:
@@ -408,7 +409,7 @@ def get_read_obj(hit, tn_read, tn_length, all_end_lengths):
 
 def do_blast(query_file, subject_file, output_name):
 	# Run blastn
-	cline = NcbiblastnCommandline(query=query_file, subject=subject_file, num_alignments=10000, out=Path(f'./{output_name}'), outfmt=5)
+	cline = NcbiblastnCommandline(query=query_file, subject=subject_file, num_alignments=2, out=Path(f'./{output_name}'), outfmt=5)
 	subprocess.run(str(cline), shell=True)
 	return output_name
 

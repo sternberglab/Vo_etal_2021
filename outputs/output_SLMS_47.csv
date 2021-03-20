@@ -1,0 +1,2 @@
+read_id,type,hsps,ends,types,read_length,genome_location,is_multi_coint
+m54312U_200808_073815/65143262/ccs,COINTEGRATE,54-1520 _ 5076-6542,"['5/65143262/ccs___0l', '5/65143262/ccs___0r', '5/65143262/ccs___1l', '5/65143262/ccs___1r']","['gn', 'pl', 'pl', 'gn']",8986,2702841,False

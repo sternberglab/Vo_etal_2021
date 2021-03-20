@@ -1,4 +1,5 @@
 helpers.txt
-outputs/
+checks/
 tmp/
 bt2index/
+__pycache__/

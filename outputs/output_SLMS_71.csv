@@ -1,0 +1,3 @@
+read_id,type,hsps,ends,types,read_length,genome_location,is_multi_coint
+m54312U_200818_234926/76220927/ccs,pl_multi,2299-3538 _ 7087-8326,"['6/76220927/ccs___0l', '6/76220927/ccs___0r', '6/76220927/ccs___1l', '6/76220927/ccs___1r']","['pl', 'pl', 'pl', 'pl']",9552,,False
+m54312U_200818_234926/79300160/ccs,pl_multi,488-1728 _ 5277-6516,"['6/79300160/ccs___0l', '6/79300160/ccs___0r', '6/79300160/ccs___1l', '6/79300160/ccs___1r']","['pl', 'pl', 'pl', 'pl']",9536,,False
