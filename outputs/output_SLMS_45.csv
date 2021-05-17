@@ -1,3 +1,0 @@
-read_id,type,hsps,ends,types,read_length,genome_location,is_multi_coint
-m54312U_200808_073815/48434011/ccs,pl_single,4112-5580,"['5/48434011/ccs___0l', '5/48434011/ccs___0r']","['pl', 'pl']",8314,,False
-m54312U_200808_073815/22020351/ccs,GENOME,4840-6304,"['5/22020351/ccs___0l', '5/22020351/ccs___0r']","['gn', 'gn']",25114,2702841,False

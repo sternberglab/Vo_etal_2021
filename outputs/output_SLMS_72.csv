@@ -1,3 +1,0 @@
-read_id,type,hsps,ends,types,read_length,genome_location,is_multi_coint
-m54312U_200818_234926/111870826/ccs,pl_single,4562-5803,"['/111870826/ccs___0l', '/111870826/ccs___0r']","['pl', 'pl']",9611,,False
-m54312U_200818_234926/79626805/ccs,unknown,2606-3851,"['6/79626805/ccs___0l', '6/79626805/ccs___0r']","['unknown', 'pl']",8025,,False
