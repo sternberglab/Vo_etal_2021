@@ -1,7 +1,0 @@
-Reads File,Tn File,Plasmid File,Genome File,Sample Code,Sample Desc,Target Sequence
-PBG-3001.PB000267_SLMS_95_BC78_p6_8M_30hCCS1210_.CCS2.0000005615.fasta.gz,shoint_wt_tn.fasta,shoint_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_95,ShoINT T252 BW Rep 1,acggggaatctgctccggcggat
-PBG-3001.PB000267_SLMS_96_BC79_p6_8M_30hCCS1210_.CCS2.0000005614.fasta.gz,shoint_wt_tn.fasta,shoint_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_96,ShoINT T252 BW Rep 2,acggggaatctgctccggcggat
-PBG-3001.PB000267_SLMS_97_BC80_p6_8M_30hCCS1210_.CCS2.0000005613.fasta.gz,shoint_wt_tn.fasta,shoint_wt_plasmid.fasta,bw25113_wt_pb_genome.fasta,SLMS_97,ShoINT T252 BW Rep 3,acggggaatctgctccggcggat
-PBG-3001.PB000267_SLMS_98_BC81_p6_8M_30hCCS1210_.CCS2.0000005612.fasta.gz,shoint_wt_tn.fasta,shoint_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_98,ShoINT T252 recA Rep 1,acggggaatctgctccggcggat
-PBG-3001.PB000267_SLMS_99_BC82_p6_8M_30hCCS1210_.CCS2.0000005611.fasta.gz,shoint_wt_tn.fasta,shoint_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_99,ShoINT T252 recA Rep 2,acggggaatctgctccggcggat
-PBG-3001.PB000267_SLMS_100_BC83_p6_8M_30hCCS1210_.CCS2.0000005610.fasta.gz,shoint_wt_tn.fasta,shoint_wt_plasmid.fasta,bw25113_reca_pb_genome.fasta,SLMS_100,ShoINT T252 recA Rep 3,acggggaatctgctccggcggat
