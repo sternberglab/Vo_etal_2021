@@ -8,4 +8,4 @@ This script uses bowtie2 and BLASTn to analyze and align reads. It also requires
 Much of the script depends on various input files (both samples being analyzed and associated fasta's for genomes, plasmids, and transposons) being accessible in an AWS S3 bucket. To adapt this for other data or purposes, point the file downloader to the location where those files are located in your setup. 
 
 ## Outputs
-All outputs from the original analysis are included here for reference
+All outputs from the original analysis are included here for reference. 
